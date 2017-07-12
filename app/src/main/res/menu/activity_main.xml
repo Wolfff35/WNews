@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+        <item
+            android:id="@+id/action_switch_theme"
+            app:showAsAction="never"
+            android:title="@string/menu_nav_switch_theme" />
+        <item
+            android:id="@+id/action_settings"
+            app:showAsAction="never"
+            android:title="@string/menu_nav_settings" />
+        <item
+            android:id="@+id/action_edit_groups"
+            app:showAsAction="never"
+            android:title="@string/menu_nav_edit_groups" />
+        <item
+            android:id="@+id/action_exit"
+            app:showAsAction="never"
+            android:title="@string/menu_nav_exit" />
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/action_share"
+        android:title="@string/menu_action_share"
         app:showAsAction="never" />
 </menu>
