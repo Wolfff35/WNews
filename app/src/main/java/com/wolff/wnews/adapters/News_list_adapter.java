@@ -28,12 +28,14 @@ public class News_list_adapter extends BaseAdapter{
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<WNews> mNewsList;
+    private ArrayList<WChannel> mChannelList;
     //private WChannel mCurrentChannel;
 
-    public News_list_adapter(Context context, ArrayList<WNews> newsList){
+    public News_list_adapter(Context context, ArrayList<WNews> newsList,ArrayList<WChannel>channelList){
         mContext=context;
         mNewsList = newsList;
         //mCurrentChannel = currentChannel;
+        mChannelList = channelList;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     @Override
@@ -79,7 +81,7 @@ public class News_list_adapter extends BaseAdapter{
         //
         String currChannel="";
         DataLab dataLab = DataLab.get(mContext);
-        WChannel ch = dataLab.findChannelById(news.getId(),dataLab.getWChannelsList());
+        WChannel ch = dataLab.findChannelById(news.getIdChannel(),mChannelList);
         if(ch!=null) {
             currChannel = ch.getName();
         }

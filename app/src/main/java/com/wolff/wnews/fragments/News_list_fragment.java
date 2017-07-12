@@ -41,7 +41,7 @@ public class News_list_fragment extends ListFragment{
         mNewsList = DataLab.get(getContext()).getWNewsList(idChannel);
         mChannelList = DataLab.get(getContext()).getWChannelsList();
        //WChannel currentChannel = DataLab.get(getContext()).findChannelById(idChannel,mChannelList);
-        News_list_adapter adapter = new News_list_adapter(getContext(),mNewsList);
+        News_list_adapter adapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
