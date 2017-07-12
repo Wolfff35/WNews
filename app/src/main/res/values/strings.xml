@@ -5,4 +5,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="menu_nav_switch_theme">Сменить тему</string>
+    <string name="menu_nav_settings">Настройки</string>
+    <string name="menu_nav_edit_groups">Редактировать группы</string>
+    <string name="menu_nav_exit">Выход</string>
+    <string name="menu_nav_group_news">НОвости</string>
+    <string name="menu_action_share">Поделиться</string>
 </resources>
