@@ -1,12 +1,14 @@
 package com.wolff.wnews.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by wolff on 07.07.2017.
  */
 
-public class WChannel {
+public class WChannel implements Serializable{
+    private static final long serialVersionUID = 1053051468057804396L;
     private long id;
     private long idGroup;
     private String name;

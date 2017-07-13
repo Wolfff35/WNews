@@ -1,12 +1,14 @@
 package com.wolff.wnews.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by wolff on 07.07.2017.
  */
 
-public class WNews {
+public class WNews implements Serializable {
+    private static final long serialVersionUID = 1053151468057804396L;
     private String guid;
     private Date pubDate;
     private String title;

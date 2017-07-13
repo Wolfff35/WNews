@@ -1,7 +1,8 @@
-package com.wolff.wnews;
+package com.wolff.wnews.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -13,19 +14,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.wolff.wnews.R;
+import com.wolff.wnews.fragments.ChannelGroup_list_fragment;
+import com.wolff.wnews.fragments.Channel_list_fragment;
 import com.wolff.wnews.fragments.News_list_fragment;
+import com.wolff.wnews.fragments.Settings_fragment;
+import com.wolff.wnews.model.WChannel;
+import com.wolff.wnews.model.WChannelGroup;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.service.NewsService;
 import com.wolff.wnews.utils.CreateMenu;
+import com.wolff.wnews.utils.MySettings;
 import com.wolff.wnews.utils.TestData;
 
 public class ActivityMain extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment.News_list_fragment_listener {
+        implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment.News_list_fragment_listener,
+        ChannelGroup_list_fragment.ChannelGroup_list_fragment_listener,Channel_list_fragment.Channel_list_fragment_listener {
 
     private int mCurrentChannelId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(new MySettings().CURRENT_THEME);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -69,19 +79,29 @@ public class ActivityMain extends AppCompatActivity
          int id = item.getItemId();
         switch (id){
             case R.id.action_exit:{
-                //stopService(new Intent(this,NewsService.class));
+                stopService(new Intent(this,NewsService.class));
+                finish();
                 break;
             }
             case R.id.action_switch_theme:{
                 break;
             }
             case R.id.action_settings:{
+                Settings_fragment fragment = Settings_fragment.newInstance();
+                displayFragment(fragment);
                 break;
             }
             case R.id.action_edit_groups:{
+                ChannelGroup_list_fragment fragment = ChannelGroup_list_fragment.newInstance();
+                displayFragment(fragment);
                 break;
             }
-              default:
+            case R.id.action_edit_channels:{
+                Channel_list_fragment fragment = Channel_list_fragment.newInstance();
+                displayFragment(fragment);
+                break;
+            }
+            default:
         }
         return super.onOptionsItemSelected(item);
     }
@@ -89,18 +109,16 @@ public class ActivityMain extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
         mCurrentChannelId = id;
         Log.e("SELECT","Channel id = "+mCurrentChannelId);
         News_list_fragment fragment = News_list_fragment.newInstance(mCurrentChannelId);
         displayFragment(fragment);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    private void displayFragment(android.support.v4.app.Fragment fragment) {
+    private void displayFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction;
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frafment_container_main, fragment);
@@ -110,5 +128,18 @@ public class ActivityMain extends AppCompatActivity
     @Override
     public void onNewsSelected(WNews news) {
         Log.e("onNewsSelected",""+news.getTitle());
+    }
+
+    @Override
+    public void onChannelGroupSelected(WChannelGroup group) {
+        Log.e("onChannelGroupSelected",""+group.getName());
+        Intent intent = ChannelGroup_item_activity.newIntent(getApplicationContext(),group);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onChannelSelected(WChannel channel) {
+        Log.e("onChannelSelected",""+channel.getName());
+
     }
 }

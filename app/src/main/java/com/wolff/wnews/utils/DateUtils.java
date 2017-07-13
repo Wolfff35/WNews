@@ -50,4 +50,19 @@ public class DateUtils {
         }
         return String.valueOf(num);
     }
+    public String calculateInterval(Date pubDate){
+        String time_interval;
+        Date now = new Date();
+        long sec = (now.getTime()-pubDate.getTime())/1000;
+        if(sec<60){
+            time_interval=""+sec+" sec";
+        }else if(sec<3600){
+            time_interval = ""+sec/60+" min";
+        }else if(sec<24*3600){
+            time_interval = ""+sec/3600+" hours";
+        }else {
+            time_interval = ""+(sec/(24*3600))+" days";
+        }
+    return time_interval;
+    }
 }

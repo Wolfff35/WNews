@@ -127,6 +127,18 @@ private DbCursorWrapper queryWNews(long idChannel){
         mDatabase.insert(DbSchema.Table_News.TABLE_NAME,null,values);
         Log.e("add news","Success "+news.getTitle());
     }
+    public void news_update(WNews news){
+        ContentValues values = getContentValues_WNews(news);
+        String table = DbSchema.Table_News.TABLE_NAME;
+        mDatabase.update(
+                table,
+                values,
+                DbSchema.BaseColumns.ID+" = ?",
+                new String[]{String.valueOf(news.getId())}
+        );
+        Log.e("update news"," Success");
+    }
+
     public void news_delete(WNews news){
         mDatabase.delete(
                 DbSchema.Table_News.TABLE_NAME,
@@ -182,6 +194,18 @@ private DbCursorWrapper queryWChannels(){
         mDatabase.insert(DbSchema.Table_Channel.TABLE_NAME,null,values);
         Log.e("add channel","Success "+channel.getTitle());
     }
+    public void channel_update(WChannel channel){
+        ContentValues values = getContentValues_WChannels(channel);
+        String table = DbSchema.Table_Channel.TABLE_NAME;
+        mDatabase.update(
+                table,
+                values,
+                DbSchema.BaseColumns.ID+" = ?",
+                new String[]{String.valueOf(channel.getId())}
+        );
+        Log.e("update channel"," Success");
+    }
+
     public void channel_delete(WChannel channel){
         mDatabase.delete(
                 DbSchema.Table_Channel.TABLE_NAME,
@@ -270,6 +294,18 @@ private DbCursorWrapper queryWChannels(){
         mDatabase.insert(DbSchema.Table_ChannelGroup.TABLE_NAME,null,values);
         Log.e("add channel group","Success "+channelGroup.getName());
     }
+    public void channelGroup_update(WChannelGroup group){
+        ContentValues values = getContentValues_WChannelGroups(group);
+        String table = DbSchema.Table_ChannelGroup.TABLE_NAME;
+        mDatabase.update(
+                table,
+                values,
+                DbSchema.BaseColumns.ID+" = ?",
+                new String[]{String.valueOf(group.getId())}
+        );
+        Log.e("update channel group"," Success");
+    }
+
     public void channelGroup_delete(WChannelGroup channelGroup){
         mDatabase.delete(
                 DbSchema.Table_ChannelGroup.TABLE_NAME,

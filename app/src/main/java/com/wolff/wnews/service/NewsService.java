@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
+import com.wolff.wnews.utils.MySettings;
 import com.wolff.wnews.utils.WriteNewsToLocalBD;
 
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 public class NewsService extends Service {
     public static final String TAG ="SERVICE";
-    private int UPDATE_PERIOD_MINUTES = 3;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -62,6 +62,6 @@ public class NewsService extends Service {
                     task.readNewsFromChannelAndWriteToLocalBD(item);
                 }
              }
-    },0,UPDATE_PERIOD_MINUTES, TimeUnit.MINUTES);
+    },0, new MySettings().UPDATE_PERIOD_MINUTES, TimeUnit.MINUTES);
     }
 }

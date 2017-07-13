@@ -13,6 +13,10 @@
             android:id="@+id/action_edit_groups"
             app:showAsAction="never"
             android:title="@string/menu_nav_edit_groups" />
+    <item
+        android:id="@+id/action_edit_channels"
+        app:showAsAction="never"
+        android:title="@string/menu_nav_edit_channels" />
         <item
             android:id="@+id/action_exit"
             app:showAsAction="never"
