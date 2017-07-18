@@ -1,16 +1,21 @@
 package com.wolff.wnews.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.wolff.wnews.R;
+import com.wolff.wnews.activities.ChannelGroup_item_activity;
 import com.wolff.wnews.adapters.ChannelGroup_list_adapter;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannelGroup;
@@ -26,6 +31,7 @@ public class ChannelGroup_list_fragment extends Fragment {
     private ArrayList<WChannelGroup> mGroupList = new ArrayList<>();
     public static final String ID_CHANNELGROUP = "ID_CHANNELGROUP";
     private ListView mGroupListViewMain;
+    private Menu mOptionsMenu;
 
     public interface ChannelGroup_list_fragment_listener{
         void onChannelGroupSelected(WChannelGroup group);
@@ -38,7 +44,16 @@ public class ChannelGroup_list_fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        mGroupList = DataLab.get(getContext()).getWChannelGroupsList();
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mGroupList = DataLab.get(getContext()).getWChannelGroupsList();
+        onActivityCreated(null);
     }
 
     @Nullable
@@ -54,7 +69,6 @@ public class ChannelGroup_list_fragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mGroupList = DataLab.get(getContext()).getWChannelGroupsList();
         ChannelGroup_list_adapter adapter = new ChannelGroup_list_adapter(getContext(),mGroupList);
 
         mGroupListViewMain.setAdapter(adapter);
@@ -76,6 +90,28 @@ public class ChannelGroup_list_fragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener=null;
+    }
+    //=================
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.mOptionsMenu = menu;
+        inflater.inflate(R.menu.menu_list_actions, mOptionsMenu);
+        super.onCreateOptionsMenu(mOptionsMenu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_add_item:{
+                Intent intent = ChannelGroup_item_activity.newIntent(getContext(),null);
+                startActivity(intent);
+
+                break;
+            }
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

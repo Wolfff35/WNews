@@ -1,9 +1,13 @@
 package com.wolff.wnews.fragments;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,6 +18,7 @@ import com.wolff.wnews.adapters.News_list_adapter;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WNews;
+import com.wolff.wnews.service.NewsService;
 
 import java.util.ArrayList;
 
@@ -27,6 +32,8 @@ public class News_list_fragment extends Fragment {
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
     public static final String ID_CHANNEL = "ID_CHANNEL";
     private ListView mNewsListViewMain;
+
+
     public interface News_list_fragment_listener{
         void onNewsSelected(WNews news);
     }

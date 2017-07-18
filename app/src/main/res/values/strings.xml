@@ -14,4 +14,6 @@
     <string name="menu_nav_edit_channels">Редактировать каналы</string>
     <string name="action_item_delete">Удалить</string>
     <string name="action_item_save">Сохранить</string>
+    <string name="menu_action_add">Добавить</string>
+    <string name="menu_action_delete">Удалить</string>
 </resources>

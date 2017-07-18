@@ -15,7 +15,7 @@ public void fillTestData(Context context){
     DataLab dataLab = DataLab.get(context);
     WChannelGroup group = new WChannelGroup();
     group.setName("Group NEWS");
-    //dataLab.channelGroup_add(group);
+   // dataLab.channelGroup_add(group);
 
     WChannel channel = new WChannel();
     channel.setIdGroup(1);
@@ -24,6 +24,7 @@ public void fillTestData(Context context){
     if(dataLab.getWChannelByLink(channel.getLink())==null) {
         dataLab.channel_add(channel);
     }
+
     channel.setIdGroup(1);
     channel.setName("Цензор");
     channel.setLink("https://censor.net.ua/includes/news_ru.xml");

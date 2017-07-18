@@ -1,5 +1,7 @@
 package com.wolff.wnews.utils;
 
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,7 +15,8 @@ import java.util.Locale;
 public class DateUtils {
     public static final String DATE_FORMAT_STR = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String DATE_FORMAT_VID = "dd-MM-yyyy";
-    public static final String DATE_FORMAT_SAVE = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_VID_FULL = "dd-MM-yyyy HH:mm:ss";
+    public static final String DATE_FORMAT_SAVE = "yyyy-MM-dd-HH-mm-ss";
 
     public Date dateFromString(String strDate, String strFormat){
         //2017-02-02T15:30:00
@@ -53,6 +56,10 @@ public class DateUtils {
     public String calculateInterval(Date pubDate){
         String time_interval;
         Date now = new Date();
+        if(pubDate==null){
+            Log.e("CALCULATE",""+pubDate);
+            return "NULL";
+        }
         long sec = (now.getTime()-pubDate.getTime())/1000;
         if(sec<60){
             time_interval=""+sec+" sec";

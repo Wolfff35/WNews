@@ -40,12 +40,12 @@ private DbCursorWrapper queryWNews(long idChannel){
     String[] columns = null;
     String groupBy = null;
     String having = null;
-    String orderBy = DbSchema.BaseColumns.pubDate+" DESC";
+    String orderBy = DbSchema.BaseColumns.PUB_DATE+" DESC";
     if(idChannel==0){
         selection = null;
         selectionArgs = null;
     }else {
-        selection = DbSchema.Table_News.Cols.idChannel + " = ?";
+        selection = DbSchema.Table_News.Cols.ID_CHANNEL+ " = ?";
         selectionArgs = new String[]{"" + idChannel};
     }
      Cursor cursor = mDatabase.query(DbSchema.Table_News.TABLE_NAME,
@@ -64,7 +64,7 @@ private DbCursorWrapper queryWNews(long idChannel){
         String groupBy = null;
         String having = null;
         String orderBy = null;
-        selection = DbSchema.Table_News.Cols.guid+" = ?";
+        selection = DbSchema.Table_News.Cols.GUID+" = ?";
         selectionArgs = new String[]{""+guid};
         Cursor cursor = mDatabase.query(DbSchema.Table_News.TABLE_NAME,
                 columns,
@@ -88,36 +88,42 @@ private DbCursorWrapper queryWNews(long idChannel){
     }
 
     public ArrayList<WNews> getWNewsList(long idChannel){
-        Log.e("READ NEWS","FROM LOCAL DB; Channel = "+idChannel);
         DbCursorWrapper cursorWrapper = queryWNews(idChannel);
         ArrayList<WNews> newsList = new ArrayList<>();
         cursorWrapper.moveToFirst();
         while (!cursorWrapper.isAfterLast()) {
-            newsList.add(cursorWrapper.getWNews());
+            WNews news = cursorWrapper.getWNews();
+            newsList.add(news);
+            //Log.e("GUID",""+news.getGuid());
             cursorWrapper.moveToNext();
         }
         cursorWrapper.close();
+        //Log.e("READ NEWS","FROM LOCAL DB; Channel = "+idChannel+"; Количество = "+newsList.size());
         return newsList;
     }
     private static ContentValues getContentValues_WNews(WNews news){
         ContentValues values = new ContentValues();
         values.put(DbSchema.BaseColumns.NAME,news.getName());
-        values.put(DbSchema.BaseColumns.description,news.getDescription());
-        values.put(DbSchema.BaseColumns.pubDate,new DateUtils().dateToString(news.getPubDate(),DateUtils.DATE_FORMAT_SAVE));
-        values.put(DbSchema.BaseColumns.link,news.getLink());
-        values.put(DbSchema.BaseColumns.title,news.getTitle());
-        values.put(DbSchema.Table_News.Cols.idChannel,news.getIdChannel());
-        values.put(DbSchema.Table_News.Cols.author,news.getAuthor());
-        values.put(DbSchema.Table_News.Cols.category,news.getCategory());
-        values.put(DbSchema.Table_News.Cols.comments,news.getComments());
-        values.put(DbSchema.Table_News.Cols.enclosure,news.getEnclosure());
-        values.put(DbSchema.Table_News.Cols.guid,news.getGuid());
-        values.put(DbSchema.Table_News.Cols.source,news.getSource());
+        values.put(DbSchema.BaseColumns.DESCRIPTION,news.getDescription());
+        values.put(DbSchema.BaseColumns.PUB_DATE,new DateUtils().dateToString(news.getPubDate(),DateUtils.DATE_FORMAT_SAVE));
+        values.put(DbSchema.BaseColumns.LINK,news.getLink());
+        values.put(DbSchema.BaseColumns.TITLE,news.getTitle());
+        values.put(DbSchema.Table_News.Cols.ID_CHANNEL,news.getIdChannel());
+        values.put(DbSchema.Table_News.Cols.AUTHOR,news.getAuthor());
+        values.put(DbSchema.Table_News.Cols.CATEGORY,news.getCategory());
+        values.put(DbSchema.Table_News.Cols.COMMENTS,news.getComments());
+        values.put(DbSchema.Table_News.Cols.ENCLOSURE,news.getEnclosure());
+        values.put(DbSchema.Table_News.Cols.GUID,news.getGuid());
+        values.put(DbSchema.Table_News.Cols.SOURCE,news.getSource());
         if(news.isReaded()) {
-            values.put(DbSchema.Table_News.Cols.isRead, 1);
+            values.put(DbSchema.Table_News.Cols.IS_READ, 1);
         }else {
-            values.put(DbSchema.Table_News.Cols.isRead, 0);
+            values.put(DbSchema.Table_News.Cols.IS_READ, 0);
         }
+        //Log.e("getContentValues_WNews","GUID = "+news.getGuid());
+        //Log.e("getContentValues_WNews","ID CHANNEL = "+news.getIdChannel());
+        //Log.e("getContentValues_WNews",""+new DateUtils().dateToString(news.getPubDate(),DateUtils.DATE_FORMAT_SAVE));
+        //Log.e("getContentValues_WNews","=============================================================================");
 
         return values;
     }
@@ -125,7 +131,7 @@ private DbCursorWrapper queryWNews(long idChannel){
      public void news_add(WNews news){
         ContentValues values = getContentValues_WNews(news);
         mDatabase.insert(DbSchema.Table_News.TABLE_NAME,null,values);
-        Log.e("add news","Success "+news.getTitle());
+        Log.e("add news","Success   DATE = "+news.getPubDate()+";    "+news.getTitle());
     }
     public void news_update(WNews news){
         ContentValues values = getContentValues_WNews(news);
@@ -175,17 +181,18 @@ private DbCursorWrapper queryWChannels(){
             cursorWrapper.moveToNext();
         }
         cursorWrapper.close();
-        return channelsList;
+        // Log.e("READ CHANNELS","FROM LOCAL DB; Количество = "+channelsList.size());
+         return channelsList;
     }
     private static ContentValues getContentValues_WChannels(WChannel channel){
         ContentValues values = new ContentValues();
         values.put(DbSchema.BaseColumns.NAME,channel.getName());
-        values.put(DbSchema.BaseColumns.description,channel.getDescription());
-        values.put(DbSchema.BaseColumns.pubDate,new DateUtils().dateToString(channel.getPubDate(),DateUtils.DATE_FORMAT_SAVE));
-        values.put(DbSchema.BaseColumns.link,channel.getLink());
-        values.put(DbSchema.BaseColumns.title,channel.getTitle());
-        values.put(DbSchema.Table_Channel.Cols.category,channel.getCategory());
-        values.put(DbSchema.Table_Channel.Cols.idGroup,channel.getIdGroup());
+        values.put(DbSchema.BaseColumns.DESCRIPTION,channel.getDescription());
+        values.put(DbSchema.BaseColumns.PUB_DATE,new DateUtils().dateToString(channel.getPubDate(),DateUtils.DATE_FORMAT_SAVE));
+        values.put(DbSchema.BaseColumns.LINK,channel.getLink());
+        values.put(DbSchema.BaseColumns.TITLE,channel.getTitle());
+        values.put(DbSchema.Table_Channel.Cols.CATEGORY,channel.getCategory());
+        values.put(DbSchema.Table_Channel.Cols.ID_GROUP,channel.getIdGroup());
         return values;
     }
 
@@ -232,7 +239,7 @@ private DbCursorWrapper queryWChannels(){
         String groupBy = null;
         String having = null;
         String orderBy = null;
-        selection = DbSchema.BaseColumns.link+" = ?";
+        selection = DbSchema.BaseColumns.LINK+" = ?";
         selectionArgs = new String[]{""+link};
         Cursor cursor = mDatabase.query(DbSchema.Table_Channel.TABLE_NAME,
                 columns,
@@ -281,6 +288,7 @@ private DbCursorWrapper queryWChannels(){
             cursorWrapper.moveToNext();
         }
         cursorWrapper.close();
+        //Log.e("READ GROUPS","FROM LOCAL DB; Количество = "+channelGroupsList.size());
         return channelGroupsList;
     }
     private static ContentValues getContentValues_WChannelGroups(WChannelGroup channelGroup){

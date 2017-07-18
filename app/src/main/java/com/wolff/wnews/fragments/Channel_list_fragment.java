@@ -1,16 +1,22 @@
 package com.wolff.wnews.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.wolff.wnews.R;
+import com.wolff.wnews.activities.ChannelGroup_item_activity;
+import com.wolff.wnews.activities.Channel_item_activity;
 import com.wolff.wnews.adapters.Channel_list_adapter;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
@@ -26,6 +32,7 @@ public class Channel_list_fragment extends Fragment {
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
     public static final String ID_CHANNEL = "ID_CHANNEL";
     private ListView mChannelListViewMain;
+    private Menu mOptionsMenu;
 
     public interface Channel_list_fragment_listener{
         void onChannelSelected(WChannel channel);
@@ -38,6 +45,7 @@ public class Channel_list_fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
     }
 
@@ -76,6 +84,27 @@ public class Channel_list_fragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener1=null;
+    }
+    //=================
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.mOptionsMenu = menu;
+        inflater.inflate(R.menu.menu_list_actions, mOptionsMenu);
+        super.onCreateOptionsMenu(mOptionsMenu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_add_item:{
+                Intent intent = Channel_item_activity.newIntent(getContext(),null);
+                startActivity(intent);
+                break;
+            }
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

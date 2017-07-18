@@ -62,6 +62,7 @@ public class News_list_adapter extends BaseAdapter{
         tvTitleNews.setText(news.getTitle());
         DateUtils dateUtils = new DateUtils();
         //
+
         String time_interval = dateUtils.calculateInterval(news.getPubDate());
         DataLab dataLab = DataLab.get(mContext);
         WChannel ch = dataLab.findChannelById(news.getIdChannel(),mChannelList);

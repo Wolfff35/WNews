@@ -38,54 +38,77 @@ public class WriteNewsToLocalBD {
     }
 
 //--------------------------------------------------------
-public void readNewsFromChannelAndWriteToLocalBD(WChannel channel){
-    //Log.e("readNews","begin");
+public void readNewsFromChannelAndWriteToLocalBD(WChannel channel) {
+   // Log.e("readNews", "begin");
     try {
-        //Log.e("readNews","1");
+        //Log.e("readNews", "1 " + channel.getLink());
         URL url = new URL(channel.getLink());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
-            //Log.e("readNews","1-1");
+        connection.setRequestProperty("User-Agent", "Test");
+        connection.setRequestProperty("Connection", "close");
+        connection.setConnectTimeout(1000);
+        connection.connect();
+        //Log.e("readNews", "1 code = " + connection.getResponseCode());
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            //Log.e("readNews", "1-1");
             InputStream inputStream = connection.getInputStream();
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(inputStream);
             Element element = document.getDocumentElement();
             NodeList nodeList = element.getElementsByTagName("item");
-            if(nodeList.getLength()>0){
-                //Log.e("readNews","1-2");
-                for(int i=0;i<nodeList.getLength();i++){
-                    //Log.e("readNews","1-3-"+i);
+            if (nodeList.getLength() > 0) {
+                //Log.e("readNews", "1-2 length = "+nodeList.getLength());
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    //Log.e("readNews", "1-3-" + i);
                     String _author;
                     String _category;
                     String _comments;
                     String _enclosure;
                     String _source;
-                    Element entry = (Element)nodeList.item(i);
-                    String _link = entry.getElementsByTagName(DbSchema.BaseColumns.link).item(0).getFirstChild().getNodeValue();
-                    String _guid = entry.getElementsByTagName(DbSchema.Table_News.Cols.guid).item(0).getFirstChild().getNodeValue();
-                    String _pubDate =  entry.getElementsByTagName(DbSchema.BaseColumns.pubDate).item(0).getFirstChild().getNodeValue();
-                    String _title = entry.getElementsByTagName(DbSchema.BaseColumns.title).item(0).getFirstChild().getNodeValue();
-                    String _description = entry.getElementsByTagName(DbSchema.BaseColumns.description).item(0).getFirstChild().getNodeValue();
-                    try{_author = entry.getElementsByTagName(DbSchema.Table_News.Cols.author).item(0).getFirstChild().getNodeValue();} catch (Exception e){_author="";}
-                    try{_category = entry.getElementsByTagName(DbSchema.Table_News.Cols.category).item(0).getFirstChild().getNodeValue();} catch (Exception e){_category="";}
-                    try{_comments = entry.getElementsByTagName(DbSchema.Table_News.Cols.comments).item(0).getFirstChild().getNodeValue();} catch (Exception e){_comments="";}
-                    //try{_enclosure = entry.getElementsByTagName(DbSchema.Table_News.Cols.enclosure).item(0).getFirstChild().getNodeValue();} catch (Exception e){_enclosure="";}
-                    try{
-                        NodeList enclosureList = entry.getElementsByTagName(DbSchema.Table_News.Cols.enclosure);
-                        if(enclosureList.getLength()>0){
-                            _enclosure = enclosureList.item(0).getAttributes().item(0).getNodeValue();
-                           // Log.e("ENCLOSURE",""+_enclosure);
-                        }else {
-                            _enclosure="";
-                        }
-                    } catch (Exception e){
-                        _enclosure="";
-                        //Log.e("ERROR",""+e.getLocalizedMessage());
+                    Element entry = (Element) nodeList.item(i);
+                    String _link = entry.getElementsByTagName(DbSchema.BaseColumns.LINK).item(0).getFirstChild().getNodeValue();
+                    String _guid = entry.getElementsByTagName(DbSchema.Table_News.Cols.GUID).item(0).getFirstChild().getNodeValue();
+                    //Log.e("GUID",""+_guid);
+                    String _pubDate = entry.getElementsByTagName(DbSchema.BaseColumns.PUB_DATE).item(0).getFirstChild().getNodeValue();
+                    String _title = entry.getElementsByTagName(DbSchema.BaseColumns.TITLE).item(0).getFirstChild().getNodeValue();
+                    String _description = entry.getElementsByTagName(DbSchema.BaseColumns.DESCRIPTION).item(0).getFirstChild().getNodeValue();
+                    try {
+                        _author = entry.getElementsByTagName(DbSchema.Table_News.Cols.AUTHOR).item(0).getFirstChild().getNodeValue();
+                    } catch (Exception e) {
+                        _author = "";
                     }
-                    try{_source = entry.getElementsByTagName(DbSchema.Table_News.Cols.source).item(0).getFirstChild().getNodeValue();} catch (Exception e){_source="";}
+                    try {
+                        _category = entry.getElementsByTagName(DbSchema.Table_News.Cols.CATEGORY).item(0).getFirstChild().getNodeValue();
+                    } catch (Exception e) {
+                        _category = "";
+                    }
+                    try {
+                        _comments = entry.getElementsByTagName(DbSchema.Table_News.Cols.COMMENTS).item(0).getFirstChild().getNodeValue();
+                    } catch (Exception e) {
+                        _comments = "";
+                    }
+                    try {
+                        NodeList enclosureList = entry.getElementsByTagName(DbSchema.Table_News.Cols.ENCLOSURE);
+                        if (enclosureList.getLength() > 0) {
+                            _enclosure = enclosureList.item(0).getAttributes().item(0).getNodeValue();
+                            //Log.e("ENCLOSURE", "" + _enclosure);
+                        } else {
+                            _enclosure = "";
+                        }
+                    } catch (Exception e) {
+                        _enclosure = "";
+                        //Log.e("ERROR", "" + e.getLocalizedMessage());
+                    }
+                    try {
+                        _source = entry.getElementsByTagName(DbSchema.Table_News.Cols.SOURCE).item(0).getFirstChild().getNodeValue();
+                    } catch (Exception e) {
+                        _source = "";
+                    }
                     DataLab dataLab = DataLab.get(mContext);
-                    if(dataLab.getWNewsByGuid(_guid)==null) {
+                    WNews currNews = dataLab.getWNewsByGuid(_guid);
+                    if (currNews == null) {
+                        //Log.e("readNews", "1-4");
                         WNews news = new WNews();
                         news.setIdChannel(channel.getId());
                         news.setLink(_link);
@@ -100,18 +123,39 @@ public void readNewsFromChannelAndWriteToLocalBD(WChannel channel){
                         news.setPubDate(new Date(_pubDate));
                         news.setTitle(_title);
                         dataLab.news_add(news);
+                    }else {
+                        //Log.e("readNews", "--Already exist!!"+i+" "+_pubDate+" ; "+_guid);
+
+                        Date newDate = new Date(_pubDate);
+                        if(new MySettings().UPDATE_NEWS_PUBDATE&&newDate!=null) {
+                            if ((newDate.getTime() - currNews.getPubDate().getTime() > 10000)) {
+                                Date oldDate = currNews.getPubDate();
+                                currNews.setPubDate(new Date(_pubDate));
+                                dataLab.news_update(currNews);
+                                DateUtils dateUtils = new DateUtils();
+                                Log.e("UPDATE NEWS", "old date: " + dateUtils.dateToString(oldDate, dateUtils.DATE_FORMAT_VID_FULL) + "; new date: " + dateUtils.dateToString(currNews.getPubDate(), dateUtils.DATE_FORMAT_VID_FULL));
+                            }
+                        }
+
+
                     }
                 }
             }
+            inputStream.close();
+        } else {
+            Log.e("readNews","ERRORRRRRR "+connection.getResponseCode());
         }
     } catch (MalformedURLException e) {
-        Log.e("readNews","2");
+        Log.e("readNews", "2");
     } catch (IOException e) {
-        Log.e("readNews","3");
+        Log.e("readNews", "3 "+e.getLocalizedMessage());
     } catch (ParserConfigurationException e) {
-        Log.e("readNews","4");
+        Log.e("readNews", "4");
     } catch (SAXException e) {
-        Log.e("readNews","5");
+        Log.e("readNews", "5");
+    }finally {
+        //Log.e("readNews","6=============================================================================");
     }
 }
+
 }

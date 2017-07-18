@@ -62,9 +62,9 @@ public class ChannelGroup_item_fragment extends Fragment {
         View view =  inflater.inflate(R.layout.channelgroup_item_fragment, container, false);
         edGroupItem_Name = (EditText)view.findViewById(R.id.edGroupItem_Name);
         edGroupItem_Name.setText(mGroupItem.getName());
+        edGroup_Name_layout = (TextInputLayout)view.findViewById(R.id.edGroup_Name_layout);
         edGroupItem_Name.addTextChangedListener(textChangedListener);
-        edGroup_Name_layout = (TextInputLayout)view.findViewById(R.id.edTask_Name_layout);
-        edGroupItem_Name.setOnFocusChangeListener(onFocusChanged_listener);
+        //edGroupItem_Name.setOnFocusChangeListener(onFocusChanged_listener);
         super.onCreateView(inflater,container,savedInstanceState);
         return view;
     }
@@ -73,7 +73,7 @@ public class ChannelGroup_item_fragment extends Fragment {
         if(mOptionsMenu!=null){
             MenuItem it_save = mOptionsMenu.findItem(R.id.action_item_save);
             MenuItem it_del = mOptionsMenu.findItem(R.id.action_item_delete);
-            it_save.setVisible(mIsDataChanged);
+            it_save.setVisible(mIsDataChanged&&edGroupItem_Name.getText().length()>1);
             it_del.setVisible(!mIsNewItem);
         }
     }
@@ -105,7 +105,7 @@ public class ChannelGroup_item_fragment extends Fragment {
     public void saveItem() {
         updateItemFields();
         if (!isFillingOk()){
-            edGroup_Name_layout.setErrorEnabled(false);
+       //     edGroup_Name_layout.setErrorEnabled(false);
             return;
         }
         if(mIsNewItem){
@@ -118,7 +118,7 @@ public class ChannelGroup_item_fragment extends Fragment {
 
     public boolean isFillingOk() {
         boolean isOk=true;
-        if(mGroupItem.getName().isEmpty()) {
+        if(mGroupItem.getName().length()<2) {
             isOk = false;
         }
         if(!isOk){
@@ -135,34 +135,8 @@ public class ChannelGroup_item_fragment extends Fragment {
     public void updateItemFields() {
         mGroupItem.setName(edGroupItem_Name.getText().toString());
      }
-/*    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode== Activity.RESULT_OK){
-            switch (requestCode){
-                case DIALOG_REQUEST_PICTURE:
-                    int idPict = data.getIntExtra(Picture_list_dialog.TAG_PICTURE_ID,-1);
-                    mAccountItem.setIdPicture(idPict);
-                    imAccountItem_Picture.setImageResource(idPict);
-                    mIsDataChanged=true;
-                    setOptionsMenuVisibility();
-                    break;
-                case DIALOG_REQUEST_CURRENCY:
-                    WCurrency currency = (WCurrency) data.getSerializableExtra(TAG_CURRENCY_ID);
-                    if(currency!=null) {
-                        mAccountItem.setCurrency(currency);
-                        imAccountItem_Currency.setText(currency.getName());
-                        mIsDataChanged = true;
-                        setOptionsMenuVisibility();
-                    }else {
-                        Log.e("RESULT"," NO CURRENCY");
-                    }
-                    break;
-            }
-        }
-    }
-    */
-    public TextWatcher textChangedListener = new TextWatcher() {
+
+     public TextWatcher textChangedListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -170,42 +144,30 @@ public class ChannelGroup_item_fragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
         }
 
         @Override
         public void afterTextChanged(Editable s) {
+            Log.e("FOCUS","view = "+s);
+            if(s.length()<2){
+               edGroup_Name_layout.setErrorEnabled(true);
+               edGroup_Name_layout.setError("Не заполнено имя "+" (min 2 символа)");
+            }else {
+                //edGroup_Name_layout.setError("");
+                edGroup_Name_layout.setErrorEnabled(false);
+            }
+            setOptionsMenuVisibility();
             mIsDataChanged=true;
             setOptionsMenuVisibility();
-            Log.e("textChangedListener 1","afterTextChanged 1");
         }
     };
-    View.OnFocusChangeListener onFocusChanged_listener = new View.OnFocusChangeListener(){
+ /*   View.OnFocusChangeListener onFocusChanged_listener = new View.OnFocusChangeListener(){
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            Log.e("FOCUS",""+v.getId()+" = "+hasFocus);
-            switch (v.getId()){
-                case R.id.edGroupItem_Name:
-                    if(edGroupItem_Name.length()<2){
-                        edGroup_Name_layout.setErrorEnabled(true);
-                        //edOperation_Name_layout.setError("Не заполнено "+getResources().getString(R.string.operation_name_label)+" (min 2 символа)");
-                        edGroup_Name_layout.setError("Не заполнено имя "+" (min 2 символа)");
-                    }else {
-                        edGroup_Name_layout.setErrorEnabled(false);
-                    }
-                    break;
-            }
-        }
+            Log.e("FOCUS","view = "+v.getId());
+            checkFieldsFilling(v);
+         }
     };
-/*    View.OnClickListener onClick_Currency_listener = new View.OnClickListener(){
-
-        @Override
-        public void onClick(View v) {
-            DialogFragment dlgPict = new Currency_list_dialog();
-            dlgPict.setTargetFragment(Account_item_fragment.this,DIALOG_REQUEST_CURRENCY);
-            dlgPict.show(getFragmentManager(),dlgPict.getClass().getName());
-
-        }
-    };*/
+*/
 }

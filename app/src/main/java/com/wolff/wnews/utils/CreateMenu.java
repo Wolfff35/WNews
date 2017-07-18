@@ -23,10 +23,12 @@ public class CreateMenu {
 
 
     public void createMenu(Context context,Menu menu){
+       // Log.e("CREATE MENU","Ok");
+
         DataLab dataLab = DataLab.get(context);
         ArrayList<WChannelGroup> mChammelGroupList = dataLab.getWChannelGroupsList();
         ArrayList<WChannel> mChannelList = dataLab.getWChannelsList();
-        for(WChannelGroup group:mChammelGroupList){
+      /*  for(WChannelGroup group:mChammelGroupList){
             Log.e("MENU_CREATE","GROUP = "+group.getName()+"id = "+group.getId());
             //menu.addSubMenu(Menu.NONE,(int)group.getId()+1000,Menu.NONE,group.getName()+" g="+group.getId());
             SubMenu sub = menu.addSubMenu(Menu.NONE,(int)group.getId(),Menu.NONE,group.getName()+" g="+group.getId());
@@ -39,12 +41,12 @@ public class CreateMenu {
                 }
             }
 
-        }
+        }*/
         //без групп
         for(WChannel channel:mChannelList){
-            if(channel.getIdGroup()==0) {
+           // if(channel.getIdGroup()==0) {
                 menu.add(Menu.NONE, (int) channel.getId(), Menu.NONE, channel.getName() + " 0  i=" + channel.getId());
-            }
+           // }
         }
     }
 }

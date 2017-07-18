@@ -35,11 +35,14 @@ public class ActivityMain extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TEST
+        TestData testData = new TestData();
+        testData.fillTestData(getApplicationContext());
+
         setTheme(new MySettings().CURRENT_THEME);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -48,16 +51,12 @@ public class ActivityMain extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        startService(new Intent(this, NewsService.class));
+        //startService(new Intent(this, NewsService.class));
         new CreateMenu().createMenu(getApplicationContext(),navigationView.getMenu());
-        //TEST
-        TestData testData = new TestData();
-        testData.fillTestData(getApplicationContext());
-        News_list_fragment fragment = News_list_fragment.newInstance(0);
+         News_list_fragment fragment = News_list_fragment.newInstance(0);
         displayFragment(fragment);
 
     }
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -70,7 +69,7 @@ public class ActivityMain extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-         getMenuInflater().inflate(R.menu.activity_main, menu);
+         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
         return true;
     }
 
@@ -111,7 +110,7 @@ public class ActivityMain extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         mCurrentChannelId = id;
-        Log.e("SELECT","Channel id = "+mCurrentChannelId);
+        //Log.e("SELECT","Channel id = "+mCurrentChannelId);
         News_list_fragment fragment = News_list_fragment.newInstance(mCurrentChannelId);
         displayFragment(fragment);
          DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -121,7 +120,7 @@ public class ActivityMain extends AppCompatActivity
     private void displayFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction;
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frafment_container_main, fragment);
+        fragmentTransaction.replace(R.id.fragment_container_main, fragment);
         fragmentTransaction.commit();
     }
 
@@ -132,14 +131,16 @@ public class ActivityMain extends AppCompatActivity
 
     @Override
     public void onChannelGroupSelected(WChannelGroup group) {
-        Log.e("onChannelGroupSelected",""+group.getName());
+        //Log.e("onChannelGroupSelected",""+group.getName());
         Intent intent = ChannelGroup_item_activity.newIntent(getApplicationContext(),group);
         startActivity(intent);
     }
 
     @Override
     public void onChannelSelected(WChannel channel) {
-        Log.e("onChannelSelected",""+channel.getName());
+        //Log.e("onChannelSelected",""+channel.getName());
+        Intent intent = Channel_item_activity.newIntent(getApplicationContext(),channel);
+        startActivity(intent);
 
     }
 }
