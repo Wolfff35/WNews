@@ -121,10 +121,7 @@ public class ChannelGroup_item_fragment extends Fragment {
         if(mGroupItem.getName().length()<2) {
             isOk = false;
         }
-        if(!isOk){
-            return false;
-        }
-        return true;
+        return isOk;
     }
 
     public void deleteItem() {

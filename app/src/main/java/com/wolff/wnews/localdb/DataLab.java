@@ -329,7 +329,7 @@ private DbCursorWrapper queryWChannels(){
                 +" WHERE "+DbSchema.Table_News.TABLE_NAME+"."+DbSchema.Table_News.Cols.ID_CHANNEL+" = "
                 +DbSchema.Table_Channel.TABLE_NAME+"."+DbSchema.BaseColumns.ID
                 +" GROUP BY "+DbSchema.Table_News.TABLE_NAME+"."+DbSchema.Table_News.Cols.ID_CHANNEL;
-        Log.e("SELECT QUERY"," = "+selectQuery);
+       // Log.e("SELECT QUERY"," = "+selectQuery);
         Cursor cursor = mDatabase.rawQuery(selectQuery,null);
         DbCursorWrapper cursorWrapper = new DbCursorWrapper(cursor);
         cursorWrapper.moveToFirst();

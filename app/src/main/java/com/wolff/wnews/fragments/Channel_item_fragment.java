@@ -98,11 +98,7 @@ public class Channel_item_fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 btnGetChannel.setEnabled(false);
-                if(DataLab.get(getContext()).getWChannelByLink(edChannelItem_Link.getText().toString())!=null){
-                    mIsNewItem=false;
-                }else {
-                    mIsNewItem=true;
-                }
+                mIsNewItem = DataLab.get(getContext()).getWChannelByLink(edChannelItem_Link.getText().toString()) == null;
                 try {
                     mChannelItem = new GetChannelInfo_Task().execute(edChannelItem_Link.getText().toString()).get();
                     if(mChannelItem!=null) {
@@ -182,10 +178,7 @@ public class Channel_item_fragment extends Fragment {
         if(mChannelItem.getName().length()<2) {
             isOk = false;
         }
-        if(!isOk){
-            return false;
-        }
-        return true;
+        return isOk;
     }
 
     public void deleteItem() {

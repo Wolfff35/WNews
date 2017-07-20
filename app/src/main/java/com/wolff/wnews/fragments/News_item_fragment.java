@@ -1,6 +1,8 @@
 package com.wolff.wnews.fragments;
 
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -45,6 +47,8 @@ public class News_item_fragment extends Fragment {
     TextView tvNewsItem_Describe;
     ImageView ivNewsItem_Picture;
     Point ScreenSize;
+    Button btnOpenNews;
+
     public static News_item_fragment newIntance(WNews item){
         Bundle args = new Bundle();
         args.putSerializable(ARG_NEWS_ITEM,item);
@@ -76,6 +80,7 @@ public class News_item_fragment extends Fragment {
         tvNewsItem_Channel_PubDate = (TextView)view.findViewById(R.id.tvNewsItem_Channel_pubDate);
         tvNewsItem_Describe = (TextView)view.findViewById(R.id.tvNewsItem_Describe);
         ivNewsItem_Picture = (ImageView)view.findViewById(R.id.ivNewsItem_Picture);
+        btnOpenNews = (Button)view.findViewById(R.id.btnOpenNews);
 
         tvNewsItem_Name.setText(mNewsItem.getName());
         DataLab dataLab = DataLab.get(getContext());
@@ -90,12 +95,19 @@ public class News_item_fragment extends Fragment {
                 picasso.setIndicatorsEnabled(true);
             }
             picasso.load(mNewsItem.getEnclosure())
-                    .resize(ScreenSize.x-10,ScreenSize.x-10)
+                    .resize(ScreenSize.x-5,ScreenSize.x-5)
                     //        .placeholder(R.drawable.ic_download_black)
                     //        .error(R.drawable.ic_error_black)
                     .into(ivNewsItem_Picture);
         }
-
+        btnOpenNews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri address = Uri.parse(mNewsItem.getLink());
+                Intent openLinkIntent = new Intent(Intent.ACTION_VIEW,address);
+                startActivity(openLinkIntent);
+            }
+        });
         super.onCreateView(inflater,container,savedInstanceState);
         return view;
     }

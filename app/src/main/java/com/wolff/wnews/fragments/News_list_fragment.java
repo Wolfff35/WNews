@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -73,6 +75,17 @@ public class News_list_fragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 listener.onNewsSelected(mNewsList,mNewsList.get(position));
+            }
+        });
+        mNewsListViewMain.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //Log.e("SCROLL","firstVisibleItem = "+firstVisibleItem+"; visibleItemCount = "+visibleItemCount+"; totalItemCount = "+totalItemCount);
             }
         });
         if(idChannel==0){
