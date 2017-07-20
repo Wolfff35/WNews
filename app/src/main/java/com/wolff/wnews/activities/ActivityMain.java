@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.wolff.wnews.R;
 import com.wolff.wnews.fragments.ChannelGroup_list_fragment;
@@ -27,11 +28,14 @@ import com.wolff.wnews.utils.CreateMenu;
 import com.wolff.wnews.utils.MySettings;
 import com.wolff.wnews.utils.TestData;
 
+import java.util.ArrayList;
+
 public class ActivityMain extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment.News_list_fragment_listener,
         ChannelGroup_list_fragment.ChannelGroup_list_fragment_listener,Channel_list_fragment.Channel_list_fragment_listener {
 
     private int mCurrentChannelId;
+    private DrawerLayout drawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,25 +47,31 @@ public class ActivityMain extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+                public void onDrawerOpened(View drawerView){
+                    super.onDrawerOpened(drawerView);
+                    new CreateMenu().createMenu(getApplicationContext(),navigationView.getMenu());
+                }
+          };
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        //startService(new Intent(this, NewsService.class));
-        new CreateMenu().createMenu(getApplicationContext(),navigationView.getMenu());
+        startService(new Intent(this, NewsService.class));
          News_list_fragment fragment = News_list_fragment.newInstance(0);
         displayFragment(fragment);
 
     }
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+
         } else {
             super.onBackPressed();
         }
@@ -110,14 +120,17 @@ public class ActivityMain extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         mCurrentChannelId = id;
-        //Log.e("SELECT","Channel id = "+mCurrentChannelId);
-        News_list_fragment fragment = News_list_fragment.newInstance(mCurrentChannelId);
-        displayFragment(fragment);
-         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if(mCurrentChannelId==0){
+            News_list_fragment fragment = News_list_fragment.newInstance(0);
+            displayFragment(fragment);
+        }else {
+            News_list_fragment fragment = News_list_fragment.newInstance(mCurrentChannelId);
+            displayFragment(fragment);
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    private void displayFragment(Fragment fragment) {
+     private void displayFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction;
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container_main, fragment);
@@ -125,20 +138,19 @@ public class ActivityMain extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelected(WNews news) {
-        Log.e("onNewsSelected",""+news.getTitle());
+    public void onNewsSelected(ArrayList<WNews>listNews,WNews news) {
+        Intent intent = News_item_activity.newIntent(getApplicationContext(),listNews,news);
+        startActivity(intent);
     }
 
     @Override
     public void onChannelGroupSelected(WChannelGroup group) {
-        //Log.e("onChannelGroupSelected",""+group.getName());
         Intent intent = ChannelGroup_item_activity.newIntent(getApplicationContext(),group);
         startActivity(intent);
     }
 
     @Override
     public void onChannelSelected(WChannel channel) {
-        //Log.e("onChannelSelected",""+channel.getName());
         Intent intent = Channel_item_activity.newIntent(getApplicationContext(),channel);
         startActivity(intent);
 

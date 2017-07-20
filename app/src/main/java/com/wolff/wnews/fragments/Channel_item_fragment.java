@@ -36,6 +36,7 @@ public class Channel_item_fragment extends Fragment {
     private WChannel mChannelItem;
     private boolean mIsNewItem;
     private boolean mIsDataChanged;
+    private boolean mIsLinkChecked;
     private Menu mOptionsMenu;
 
     EditText edChannelItem_Name;
@@ -67,6 +68,10 @@ public class Channel_item_fragment extends Fragment {
         if(mChannelItem==null){
             mChannelItem = new WChannel();
             mIsNewItem=true;
+            mIsLinkChecked=false;
+        }else {
+            mIsLinkChecked=true;
+            mIsNewItem=false;
         }
     }
     @Override
@@ -93,30 +98,35 @@ public class Channel_item_fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 btnGetChannel.setEnabled(false);
+                if(DataLab.get(getContext()).getWChannelByLink(edChannelItem_Link.getText().toString())!=null){
+                    mIsNewItem=false;
+                }else {
+                    mIsNewItem=true;
+                }
                 try {
                     mChannelItem = new GetChannelInfo_Task().execute(edChannelItem_Link.getText().toString()).get();
                     if(mChannelItem!=null) {
-                        mIsDataChanged = true;
+                        mIsLinkChecked = true;
                         tvChannelItem_Title.setText(mChannelItem.getTitle());
                         tvChannelItem_Description.setText(mChannelItem.getDescription());
                         tvChannelItem_PubDate.setText(new DateUtils().dateToString(mChannelItem.getPubDate(), DateUtils.DATE_FORMAT_VID));
                         Log.e("GET CHANNEL", "OK");
                         setOptionsMenuVisibility();
-                        btnGetChannel.setEnabled(true);
                     }else {
+                        mIsLinkChecked=false;
                         Log.e("GET CHANNEL", "NULL");
                     }
                 } catch (InterruptedException e) {
+                    mIsLinkChecked=false;
                     Log.e("GET CHANNEL","ERROR "+e.getLocalizedMessage());
                 } catch (ExecutionException e) {
+                    mIsLinkChecked=false;
                     Log.e("GET CHANNEL","ERROR 2 "+e.getLocalizedMessage());
                 }
                 Log.e("textChangedListener 1","afterTextChanged 1");
+                btnGetChannel.setEnabled(true);
             }
-
-
         });
-        //edChannelItem_Name.setOnFocusChangeListener(onFocusChanged_listener);
         super.onCreateView(inflater,container,savedInstanceState);
         return view;
     }
@@ -125,7 +135,7 @@ public class Channel_item_fragment extends Fragment {
         if(mOptionsMenu!=null){
             MenuItem it_save = mOptionsMenu.findItem(R.id.action_item_save);
             MenuItem it_del = mOptionsMenu.findItem(R.id.action_item_delete);
-            it_save.setVisible(mIsDataChanged&&edChannelItem_Name.getText().length()>1);
+            it_save.setVisible(mIsLinkChecked&&mIsDataChanged&&edChannelItem_Name.getText().length()>1);
             it_del.setVisible(!mIsNewItem);
         }
     }
@@ -185,6 +195,7 @@ public class Channel_item_fragment extends Fragment {
 
     public void updateItemFields() {
         mChannelItem.setName(edChannelItem_Name.getText().toString());
+        //mChannelItem.setTitle(tvChannelItem_Title.getText().toString());
      }
 /*    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

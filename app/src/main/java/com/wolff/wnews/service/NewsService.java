@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
@@ -62,11 +63,15 @@ public class NewsService extends Service {
                     //Log.e("INTERNET","NOT ONLINE");
                     return;
                 }
-                ArrayList<WChannel> channels = DataLab.get(getApplicationContext()).getWChannelsList();
+                 ArrayList<WChannel> channels = DataLab.get(getApplicationContext()).getWChannelsList();
                 for(WChannel item:channels) {
-                   // Log.e("CHANNELS",""+item.getLink());
+                    //Log.e("CHANNELS",""+item.getLink());
                     WriteNewsToLocalBD task = new WriteNewsToLocalBD(getApplicationContext());
                     task.readNewsFromChannelAndWriteToLocalBD(item);
+                    //Toast toast = new Toast(getApplicationContext());
+                    //toast.setText("Обновлен канал "+item.getName());
+                    //toast.show();
+                    //Log.e("SERVICE","Обновлен канал "+item.getName());
                 }
              }
     },0, new MySettings().UPDATE_PERIOD_MINUTES, TimeUnit.MINUTES);

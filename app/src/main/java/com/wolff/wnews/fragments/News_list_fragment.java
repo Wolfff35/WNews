@@ -35,7 +35,7 @@ public class News_list_fragment extends Fragment {
 
 
     public interface News_list_fragment_listener{
-        void onNewsSelected(WNews news);
+        void onNewsSelected(ArrayList<WNews> newsList,WNews news);
     }
     public static News_list_fragment newInstance(long idChannel){
         News_list_fragment fragment = new News_list_fragment();
@@ -72,7 +72,7 @@ public class News_list_fragment extends Fragment {
         mNewsListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                listener.onNewsSelected(mNewsList.get(position));
+                listener.onNewsSelected(mNewsList,mNewsList.get(position));
             }
         });
         if(idChannel==0){

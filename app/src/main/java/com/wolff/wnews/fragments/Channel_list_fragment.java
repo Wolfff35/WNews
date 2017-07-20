@@ -48,6 +48,13 @@ public class Channel_list_fragment extends Fragment {
         setHasOptionsMenu(true);
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        mChannelList = DataLab.get(getContext()).getWChannelsList();
+        onActivityCreated(null);
+    }
+
 
     @Nullable
     @Override

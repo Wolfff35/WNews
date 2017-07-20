@@ -21,10 +21,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.ChannelGroup_item_activity">
+        <activity android:name=".activities.ChannelGroup_item_activity"
+            android:parentActivityName=".activities.ActivityMain">
 
         </activity>
-        <activity android:name=".activities.Channel_item_activity">
+        <activity android:name=".activities.Channel_item_activity"
+            android:parentActivityName=".activities.ActivityMain">
+
+        </activity>
+        <activity android:name=".activities.News_item_activity"
+                  android:parentActivityName=".activities.ActivityMain">
 
         </activity>
         <service android:name=".service.NewsService">

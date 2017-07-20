@@ -14,11 +14,8 @@ public class WNews implements Serializable {
     private String title;
     private String description;
     private String link;
-    private String author;
-    private String category;
-    private String comments;
     private String enclosure;
-    private String source;
+    private String enclosure_type;
 
     private long id;
     private String name;
@@ -97,31 +94,7 @@ public class WNews implements Serializable {
         this.link = link;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getEnclosure() {
+     public String getEnclosure() {
         return enclosure;
     }
 
@@ -129,14 +102,14 @@ public class WNews implements Serializable {
         this.enclosure = enclosure;
     }
 
-    public String getSource() {
-        return source;
+    public String getEnclosure_type() {
+        return enclosure_type;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public void setEnclosure_type(String enclosure_type) {
+        this.enclosure_type = enclosure_type;
     }
-    /*
+/*
     guid        – Уникальный идентификатор элемента item.
     pubDate     – Дата публикации элемента.
     title       – Заголовок элемента. В нашем случае он совпадает с заголовком публикуемой записи в интернет-дневнике.

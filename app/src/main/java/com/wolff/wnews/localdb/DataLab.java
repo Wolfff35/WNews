@@ -109,12 +109,9 @@ private DbCursorWrapper queryWNews(long idChannel){
         values.put(DbSchema.BaseColumns.LINK,news.getLink());
         values.put(DbSchema.BaseColumns.TITLE,news.getTitle());
         values.put(DbSchema.Table_News.Cols.ID_CHANNEL,news.getIdChannel());
-        values.put(DbSchema.Table_News.Cols.AUTHOR,news.getAuthor());
-        values.put(DbSchema.Table_News.Cols.CATEGORY,news.getCategory());
-        values.put(DbSchema.Table_News.Cols.COMMENTS,news.getComments());
         values.put(DbSchema.Table_News.Cols.ENCLOSURE,news.getEnclosure());
+        values.put(DbSchema.Table_News.Cols.ENCLOSURE_TYPE,news.getEnclosure_type());
         values.put(DbSchema.Table_News.Cols.GUID,news.getGuid());
-        values.put(DbSchema.Table_News.Cols.SOURCE,news.getSource());
         if(news.isReaded()) {
             values.put(DbSchema.Table_News.Cols.IS_READ, 1);
         }else {
@@ -131,7 +128,7 @@ private DbCursorWrapper queryWNews(long idChannel){
      public void news_add(WNews news){
         ContentValues values = getContentValues_WNews(news);
         mDatabase.insert(DbSchema.Table_News.TABLE_NAME,null,values);
-        Log.e("add news","Success   DATE = "+news.getPubDate()+";    "+news.getTitle());
+        //Log.e("add news","Success   DATE = "+news.getPubDate()+";    "+news.getTitle());
     }
     public void news_update(WNews news){
         ContentValues values = getContentValues_WNews(news);
@@ -142,7 +139,7 @@ private DbCursorWrapper queryWNews(long idChannel){
                 DbSchema.BaseColumns.ID+" = ?",
                 new String[]{String.valueOf(news.getId())}
         );
-        Log.e("update news"," Success");
+        //Log.e("update news"," Success");
     }
 
     public void news_delete(WNews news){
@@ -151,7 +148,7 @@ private DbCursorWrapper queryWNews(long idChannel){
                 DbSchema.BaseColumns.ID+" =?",
                 new String[]{String.valueOf(news.getId())}
         );
-        Log.e("delete news","Success");
+        //Log.e("delete news","Success");
     }
 //===================================================================================================
 private DbCursorWrapper queryWChannels(){
@@ -177,7 +174,7 @@ private DbCursorWrapper queryWChannels(){
         ArrayList<WChannel> channelsList = new ArrayList<>();
         cursorWrapper.moveToFirst();
         while (!cursorWrapper.isAfterLast()) {
-            channelsList.add(cursorWrapper.getWChannel());
+            channelsList.add(cursorWrapper.getWChannel(false));
             cursorWrapper.moveToNext();
         }
         cursorWrapper.close();
@@ -191,7 +188,6 @@ private DbCursorWrapper queryWChannels(){
         values.put(DbSchema.BaseColumns.PUB_DATE,new DateUtils().dateToString(channel.getPubDate(),DateUtils.DATE_FORMAT_SAVE));
         values.put(DbSchema.BaseColumns.LINK,channel.getLink());
         values.put(DbSchema.BaseColumns.TITLE,channel.getTitle());
-        values.put(DbSchema.Table_Channel.Cols.CATEGORY,channel.getCategory());
         values.put(DbSchema.Table_Channel.Cols.ID_GROUP,channel.getIdGroup());
         return values;
     }
@@ -199,7 +195,7 @@ private DbCursorWrapper queryWChannels(){
      public void channel_add(WChannel channel){
         ContentValues values = getContentValues_WChannels(channel);
         mDatabase.insert(DbSchema.Table_Channel.TABLE_NAME,null,values);
-        Log.e("add channel","Success "+channel.getTitle());
+        //Log.e("add channel","Success "+channel.getTitle());
     }
     public void channel_update(WChannel channel){
         ContentValues values = getContentValues_WChannels(channel);
@@ -207,10 +203,10 @@ private DbCursorWrapper queryWChannels(){
         mDatabase.update(
                 table,
                 values,
-                DbSchema.BaseColumns.ID+" = ?",
-                new String[]{String.valueOf(channel.getId())}
+                DbSchema.BaseColumns.LINK+" = ?",
+                new String[]{String.valueOf(channel.getLink())}
         );
-        Log.e("update channel"," Success");
+        //Log.e("update channel"," Success");
     }
 
     public void channel_delete(WChannel channel){
@@ -219,13 +215,13 @@ private DbCursorWrapper queryWChannels(){
                 DbSchema.BaseColumns.ID+" =?",
                 new String[]{String.valueOf(channel.getId())}
         );
-        Log.e("delete channel","Success");
+        //Log.e("delete channel","Success");
     }
     public WChannel getWChannelByLink(String link){
         DbCursorWrapper cursorWrapper = queryWChannelByLink(link);
         if(cursorWrapper.getCount()>0) {
             cursorWrapper.moveToFirst();
-            WChannel channel = cursorWrapper.getWChannel();
+            WChannel channel = cursorWrapper.getWChannel(false);
             cursorWrapper.close();
             return channel;
         }else {
@@ -300,7 +296,7 @@ private DbCursorWrapper queryWChannels(){
     public void channelGroup_add(WChannelGroup channelGroup){
         ContentValues values = getContentValues_WChannelGroups(channelGroup);
         mDatabase.insert(DbSchema.Table_ChannelGroup.TABLE_NAME,null,values);
-        Log.e("add channel group","Success "+channelGroup.getName());
+        //Log.e("add channel group","Success "+channelGroup.getName());
     }
     public void channelGroup_update(WChannelGroup group){
         ContentValues values = getContentValues_WChannelGroups(group);
@@ -311,7 +307,7 @@ private DbCursorWrapper queryWChannels(){
                 DbSchema.BaseColumns.ID+" = ?",
                 new String[]{String.valueOf(group.getId())}
         );
-        Log.e("update channel group"," Success");
+        //Log.e("update channel group"," Success");
     }
 
     public void channelGroup_delete(WChannelGroup channelGroup){
@@ -320,6 +316,30 @@ private DbCursorWrapper queryWChannels(){
                 DbSchema.BaseColumns.ID+" =?",
                 new String[]{String.valueOf(channelGroup.getId())}
         );
-        Log.e("delete channel group","Success");
+        //Log.e("delete channel group","Success");
+    }
+    //=======================================================================================================
+    //Main menu creation
+    public ArrayList<WChannel> getMenuItems(){
+        ArrayList<WChannel> channelsList  = new ArrayList<>();
+        String selectQuery = "SELECT COUNT ("+DbSchema.Table_News.TABLE_NAME+"."+DbSchema.Table_News.Cols.IS_READ+") AS "+DbSchema.Table_Channel.Cols.MENU_ITEMS_ALL
+                +", SUM("+DbSchema.Table_News.TABLE_NAME+"."+DbSchema.Table_News.Cols.IS_READ+") AS "+DbSchema.Table_Channel.Cols.MENU_ITEMS_READ
+                +", "+DbSchema.Table_Channel.TABLE_NAME+".*"
+                +" FROM "+DbSchema.Table_News.TABLE_NAME+", "+DbSchema.Table_Channel.TABLE_NAME
+                +" WHERE "+DbSchema.Table_News.TABLE_NAME+"."+DbSchema.Table_News.Cols.ID_CHANNEL+" = "
+                +DbSchema.Table_Channel.TABLE_NAME+"."+DbSchema.BaseColumns.ID
+                +" GROUP BY "+DbSchema.Table_News.TABLE_NAME+"."+DbSchema.Table_News.Cols.ID_CHANNEL;
+        Log.e("SELECT QUERY"," = "+selectQuery);
+        Cursor cursor = mDatabase.rawQuery(selectQuery,null);
+        DbCursorWrapper cursorWrapper = new DbCursorWrapper(cursor);
+        cursorWrapper.moveToFirst();
+        while (!cursorWrapper.isAfterLast()) {
+            channelsList.add(cursorWrapper.getWChannel(true));
+            cursorWrapper.moveToNext();
+        }
+        cursorWrapper.close();
+        cursor.close();
+
+        return channelsList;
     }
  }
