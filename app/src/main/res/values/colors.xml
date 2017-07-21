@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#606161</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="color_readed_news">#696969</color>
+    <color name="color_readed_news">#acacac</color>
     <color name="color_unreaded_news">#000000</color>
 </resources>

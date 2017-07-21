@@ -79,7 +79,7 @@ public class Channel_list_fragment extends Fragment {
                 listener1.onChannelSelected(mChannelList.get(position));
             }
         });
-        getActivity().setTitle("Новостные каналы");
+        getActivity().setTitle(getString(R.string.menu_nav_header_channels));
     }
     @Override
     public void onAttach(Context context) {

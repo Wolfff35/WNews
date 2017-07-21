@@ -17,4 +17,5 @@
     <string name="menu_action_item_save">Сохранить</string>
     <string name="menu_action_list_add">Добавить</string>
     <string name="menu_action_delete">Удалить</string>
+    <string name="fragment_title_groupchannel">Группы новостных каналов</string>
 </resources>

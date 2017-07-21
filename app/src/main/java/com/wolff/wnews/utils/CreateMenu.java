@@ -24,7 +24,7 @@ public class CreateMenu {
 
     public void createMenu(Context context,Menu menu){
         menu.clear();
-        Log.e("CREATE MENU","Ok");
+        //Log.e("CREATE MENU","Ok");
         menu.add(Menu.NONE,0,Menu.NONE,"ALL NEWS");
         DataLab dataLab = DataLab.get(context);
         ArrayList<WChannelGroup> mChammelGroupList = dataLab.getWChannelGroupsList();

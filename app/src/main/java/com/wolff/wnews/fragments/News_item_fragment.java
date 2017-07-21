@@ -86,7 +86,7 @@ public class News_item_fragment extends Fragment {
         DataLab dataLab = DataLab.get(getContext());
         DateUtils dateUtils = new DateUtils();
         WChannel channel = dataLab.findChannelById(mNewsItem.getIdChannel(),dataLab.getWChannelsList());
-        tvNewsItem_Channel_PubDate.setText(channel.getTitle()+" / "+dateUtils.calculateInterval(mNewsItem.getPubDate()));
+        tvNewsItem_Channel_PubDate.setText(channel.getName()+" / "+dateUtils.calculateInterval(mNewsItem.getPubDate()));
         tvNewsItem_Describe.setText(mNewsItem.getDescription());
 
         if(!mNewsItem.getEnclosure().isEmpty()) {

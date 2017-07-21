@@ -78,7 +78,7 @@ public class ChannelGroup_list_fragment extends Fragment {
                 listener.onChannelGroupSelected(mGroupList.get(position));
             }
         });
-            getActivity().setTitle("Группы новостных каналов ");
+            getActivity().setTitle(getString(R.string.fragment_title_groupchannel));
     }
     @Override
     public void onAttach(Context context) {

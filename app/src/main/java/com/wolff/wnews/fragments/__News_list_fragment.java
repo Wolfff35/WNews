@@ -28,19 +28,19 @@ import java.util.ArrayList;
  * Created by wolff on 11.07.2017.
  */
 
-public class News_list_fragment extends Fragment {
-    private News_list_fragment_listener listener;
+public class __News_list_fragment extends Fragment {
+    private __News_list_fragment_listener listener;
     private ArrayList<WNews> mNewsList = new ArrayList<>();
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
     public static final String ID_CHANNEL = "ID_CHANNEL";
     private ListView mNewsListViewMain;
     private long mIdCurrentChannel;
 
-    public interface News_list_fragment_listener{
+    public interface __News_list_fragment_listener{
         void onNewsSelected(ArrayList<WNews> newsList,WNews news);
     }
-    public static News_list_fragment newInstance(long idChannel){
-        News_list_fragment fragment = new News_list_fragment();
+    public static __News_list_fragment newInstance(long idChannel){
+        __News_list_fragment fragment = new __News_list_fragment();
         Bundle bundle = new Bundle();
         bundle.putLong(ID_CHANNEL,idChannel);
         fragment.setArguments(bundle);
@@ -104,7 +104,7 @@ public class News_list_fragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (News_list_fragment_listener) context;
+        listener = (__News_list_fragment_listener) context;
     }
 
     @Override
