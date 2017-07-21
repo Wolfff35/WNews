@@ -75,7 +75,7 @@ public class News_item_fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.news_item_fragment, container, false);
+        View view =  inflater.inflate(R.layout.news_item_fragment, container,false);
         tvNewsItem_Name = (TextView)view.findViewById(R.id.tvNewsItem_Name);
         tvNewsItem_Channel_PubDate = (TextView)view.findViewById(R.id.tvNewsItem_Channel_pubDate);
         tvNewsItem_Describe = (TextView)view.findViewById(R.id.tvNewsItem_Describe);
@@ -108,7 +108,8 @@ public class News_item_fragment extends Fragment {
                 startActivity(openLinkIntent);
             }
         });
-        super.onCreateView(inflater,container,savedInstanceState);
+
+         super.onCreateView(inflater,container,savedInstanceState);
         return view;
     }
 

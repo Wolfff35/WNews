@@ -12,4 +12,5 @@ public class MySettings {
     public boolean UPDATE_NEWS_PUBDATE = true;
     //public int CURRENT_THEME = R.style.ThemeOverlay_AppCompat_Dark;
     public int CURRENT_THEME = R.style.ThemeOverlay_AppCompat;
+    public static boolean MARK_AS_READ_IF_OPEN = true; //автоматичевкм помечать как прочитанную при открытии
 }

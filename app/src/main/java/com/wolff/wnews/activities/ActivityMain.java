@@ -36,9 +36,30 @@ public class ActivityMain extends AppCompatActivity
 
     private int mCurrentChannelId;
     private DrawerLayout drawer;
+
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("mCurrentChannelId",mCurrentChannelId);
+        //Log.e("onSaveInstanceState","onSaveInstanceState");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mCurrentChannelId = savedInstanceState.getInt("mCurrentChannelId");
+        //Log.e("onRestoreInstanceState","onRestoreInstanceState");
+    }
+
+     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(savedInstanceState!=null) {
+            mCurrentChannelId = savedInstanceState.getInt("mCurrentChannelId");
+        }else {
+            mCurrentChannelId=0;
+        }
+        //Log.e("onCreate","onCreate");
         //TEST
         TestData testData = new TestData();
         testData.fillTestData(getApplicationContext());
@@ -63,7 +84,7 @@ public class ActivityMain extends AppCompatActivity
         toggle.syncState();
 
         startService(new Intent(this, NewsService.class));
-         News_list_fragment fragment = News_list_fragment.newInstance(0);
+         News_list_fragment fragment = News_list_fragment.newInstance(mCurrentChannelId);
         displayFragment(fragment);
 
     }
