@@ -10,6 +10,7 @@ import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WChannelGroup;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.utils.DateUtils;
+import com.wolff.wnews.utils.MySettings;
 
 import java.util.ArrayList;
 
@@ -41,12 +42,23 @@ private DbCursorWrapper queryWNews(long idChannel){
     String groupBy = null;
     String having = null;
     String orderBy = DbSchema.BaseColumns.PUB_DATE+" DESC";
-    if(idChannel==0){
-        selection = null;
-        selectionArgs = null;
+    if(MySettings.ONLY_UNREADED_NEWS){
+        if (idChannel == 0) {
+            selection = DbSchema.Table_News.Cols.IS_READ + " = ?";
+            selectionArgs = new String[]{"0"};
+        } else {
+            selection = DbSchema.Table_News.Cols.ID_CHANNEL + " = ? AND "+DbSchema.Table_News.Cols.IS_READ + " = ?";
+            selectionArgs = new String[]{"" + idChannel,"0"};
+        }
+
     }else {
-        selection = DbSchema.Table_News.Cols.ID_CHANNEL+ " = ?";
-        selectionArgs = new String[]{"" + idChannel};
+        if (idChannel == 0) {
+            selection = null;
+            selectionArgs = null;
+        } else {
+            selection = DbSchema.Table_News.Cols.ID_CHANNEL + " = ?";
+            selectionArgs = new String[]{"" + idChannel};
+        }
     }
      Cursor cursor = mDatabase.query(DbSchema.Table_News.TABLE_NAME,
             columns,

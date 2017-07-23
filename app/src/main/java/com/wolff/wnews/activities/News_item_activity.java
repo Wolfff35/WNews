@@ -88,10 +88,10 @@ public class News_item_activity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 Log.e("onPageSelected","PAGE = "+position);
                 WNews item = mNewsList.get(position);
-                 if(MySettings.MARK_AS_READ_IF_OPEN&&!item.isReaded()){
-                     item.setReaded(true);
-                     DataLab.get(getApplicationContext()).news_update(item);
-                 }
+                 //if(MySettings.MARK_AS_READ_IF_OPEN&&!item.isReaded()){
+                 //    item.setReaded(true);
+                 //    DataLab.get(getApplicationContext()).news_update(item);
+                 //}
 
             }
 

@@ -59,7 +59,7 @@ public class News_list_adapter extends BaseAdapter{
         TextView tvTitleNews = (TextView)view.findViewById(R.id.tvTitleNews);
         TextView tvDatePubNews = (TextView)view.findViewById(R.id.tvDatePubNews);
         WNews news = (WNews)getItem(position);
-        tvTitleNews.setText(news.getTitle());
+        tvTitleNews.setText(news.getId()+" - "+news.getTitle());
         DateUtils dateUtils = new DateUtils();
         //
         if(news.isReaded()){

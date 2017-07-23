@@ -6,13 +6,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import com.wolff.wnews.R;
 import com.wolff.wnews.fragments.ChannelGroup_list_fragment;
 import com.wolff.wnews.fragments.Channel_list_fragment;
-import com.wolff.wnews.fragments.__News_list_fragment;
 import com.wolff.wnews.fragments.News_list_fragment_viewPager;
 import com.wolff.wnews.fragments.Settings_fragment;
 import com.wolff.wnews.localdb.DataLab;
@@ -33,11 +32,12 @@ import com.wolff.wnews.service.NewsService;
 import com.wolff.wnews.utils.CreateMenu;
 import com.wolff.wnews.utils.MySettings;
 import com.wolff.wnews.utils.TestData;
+import com.wolff.wnews.utils.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
 
 public class ActivityMain extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,__News_list_fragment.__News_list_fragment_listener,News_list_fragment_viewPager.News_list_fragment_listener,
+        implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment_viewPager.News_list_fragment_listener,
         ChannelGroup_list_fragment.ChannelGroup_list_fragment_listener,Channel_list_fragment.Channel_list_fragment_listener {
 
     private int mCurrentChannelId;
@@ -46,28 +46,10 @@ public class ActivityMain extends AppCompatActivity
     private LinearLayout mMainContainer;
     private ViewPager mViewPager_News;
     private int mCurrentNewsScreen=0;//текущий экран новостей
-    private int mNewsPerScreen = 5;//количество навостей на странице
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("mCurrentChannelId",mCurrentChannelId);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mCurrentChannelId = savedInstanceState.getInt("mCurrentChannelId");
-    }
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState!=null) {
-            mCurrentChannelId = savedInstanceState.getInt("mCurrentChannelId");
-        }else {
-            mCurrentChannelId=0;
-        }
-        //Log.e("onCreate","onCreate");
         //TEST
         TestData testData = new TestData();
         testData.fillTestData(getApplicationContext());
@@ -95,7 +77,6 @@ public class ActivityMain extends AppCompatActivity
         toggle.syncState();
 
         startService(new Intent(this, NewsService.class));
-        //__News_list_fragment fragment = __News_list_fragment.newInstance(mCurrentChannelId);
         displayFragment(null);
 
     }
@@ -152,20 +133,12 @@ public class ActivityMain extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         mCurrentChannelId = id;
-        if(mCurrentChannelId==0){
-            //__News_list_fragment fragment = __News_list_fragment.newInstance(0);
-            //displayFragment(fragment);
-            displayFragment(null);
-        }else {
-           // __News_list_fragment fragment = __News_list_fragment.newInstance(mCurrentChannelId);
-            displayFragment(null);
-        }
+        displayFragment(null);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
      private void displayFragment(Fragment fragment) {
-      // Log.e("DISPLAY"," fragment = "+fragment.getClass().getName());
-         //if(fragment.getClass().getName().equalsIgnoreCase("com.wolff.wnews.fragments.__News_list_fragment")) {
+         Log.e("displayFragment","DISPLAY");
          if(fragment==null){
              mMainContainer.setVisibility(View.INVISIBLE);
              mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -174,10 +147,10 @@ public class ActivityMain extends AppCompatActivity
              mViewPager_News.setLayoutParams(params);
              DataLab dataLab = DataLab.get(getApplicationContext());
              final ArrayList<WNews> allNews = dataLab.getWNewsList(mCurrentChannelId);
+             mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
              mViewPager_News.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
                     @Override
                     public Fragment getItem(int position) {
-                        //Log.e("getItem","position = "+position);
                         mCurrentNewsScreen = position;
                         ArrayList<WNews> partNews = getPartNews(allNews,mCurrentNewsScreen);
                         return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId);
@@ -186,14 +159,10 @@ public class ActivityMain extends AppCompatActivity
                     @Override
                     public int getCount() {
                         int l = allNews.size();
-                        //Log.e("getCount","   allNews.size() = "+l);
-                        //Log.e("getCount","  l%mNewsPerScreen = "+(l%mNewsPerScreen));
-                        //Log.e("getCount"," (l-l%mNewsPerScreen) = "+((l-l%mNewsPerScreen)));
-                        //Log.e("getCount"," return "+((l-l%mNewsPerScreen)/mNewsPerScreen));
-                        if(l<=mNewsPerScreen){
+                        if(l<=MySettings.NEWS_PER_SCREEN){
                             return 1;
                         }else {
-                            return ((l - l % mNewsPerScreen) / mNewsPerScreen);
+                            return ((l - l % MySettings.NEWS_PER_SCREEN) / MySettings.NEWS_PER_SCREEN);
                         }
                     }
                 });
@@ -208,27 +177,15 @@ public class ActivityMain extends AppCompatActivity
              fragmentTransaction.replace(R.id.fragment_container_main, fragment);
              fragmentTransaction.commit();
         }
-        //}
     }
     private ArrayList<WNews> getPartNews(ArrayList<WNews> allNews,int currentScreen){
-        ArrayList<WNews> partNews = new ArrayList<>(mNewsPerScreen);
-        for(int i=currentScreen*mNewsPerScreen;i<currentScreen*mNewsPerScreen+mNewsPerScreen;i++){
-            //Log.e("PART", "i = " + i);
-            //Log.e("PART", "currentScreen = " + currentScreen);
-            //Log.e("PART", "mNewsPerScreen = " + mNewsPerScreen);
-            //Log.e("PART", "allNews.size() = " + allNews.size());
+        ArrayList<WNews> partNews = new ArrayList<>(MySettings.NEWS_PER_SCREEN);
+        for(int i=currentScreen*MySettings.NEWS_PER_SCREEN;i<currentScreen*MySettings.NEWS_PER_SCREEN+MySettings.NEWS_PER_SCREEN;i++){
             if(i<allNews.size()) {
-                //Log.e("PART", "add");
                 partNews.add(allNews.get(i));
             }
         }
     return partNews;
-    }
-
-    @Override
-    public void onNewsSelected(ArrayList<WNews>listNews,WNews news) {
-        Intent intent = News_item_activity.newIntent(getApplicationContext(),listNews,news);
-        startActivity(intent);
     }
 
     @Override
@@ -247,6 +204,10 @@ public class ActivityMain extends AppCompatActivity
     @Override
     public void onNewsSelected_vp(ArrayList<WNews> newsList, WNews news) {
         Intent intent = News_item_activity.newIntent(getApplicationContext(),newsList,news);
+        if(MySettings.MARK_AS_READ_IF_OPEN&&!news.isReaded()){
+            news.setReaded(true);
+            DataLab.get(getApplicationContext()).news_update(news);
+        }
         startActivity(intent);
 
     }

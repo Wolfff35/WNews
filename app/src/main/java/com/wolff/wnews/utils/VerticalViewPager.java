@@ -3,6 +3,7 @@ package com.wolff.wnews.utils;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -45,8 +46,11 @@ public class VerticalViewPager extends ViewPager {
                 view.setTranslationX(view.getWidth() * -position);
 
                 //set Y position to swipe in from top
-                float yPosition = position * view.getHeight();
+                float yPosition = position * view.getHeight()+50;//!!!
                 view.setTranslationY(yPosition);
+                //Log.e("position"," = "+position);
+                //Log.e("yPosition"," = "+yPosition);
+                //Log.e("view.getWidth()"," = "+view.getWidth());
 
             } else { // (1,+Infinity]
                 // This page is way off-screen to the right.
@@ -66,7 +70,10 @@ public class VerticalViewPager extends ViewPager {
         float newY = (ev.getX() / width) * height;
 
         ev.setLocation(newX, newY);
-
+    //Log.e("width"," = "+width);
+    //Log.e("height"," = "+height);
+    //Log.e("newX"," = "+newX);
+    //Log.e("newY"," = "+newY);
         return ev;
     }
 

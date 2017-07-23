@@ -30,8 +30,11 @@ public class News_list_fragment_viewPager extends Fragment {
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
     public static final String ID_PARTNEWS = "ID_PARTNEWS";
     public static final String ID_CHANNEL = "ID_CHANNEL";
+   // public static final String ID_SCREEN = "ID_SCREEN";
     private ListView mNewsListViewMain;
     private long mIdCurrentChannel;
+    //private int mCurrentNewsScreen;
+
 
     public interface News_list_fragment_listener{
         void onNewsSelected_vp(ArrayList<WNews> newsList, WNews news);
@@ -41,26 +44,21 @@ public class News_list_fragment_viewPager extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putSerializable(ID_PARTNEWS,partNews);
         bundle.putLong(ID_CHANNEL,idChannel);
+
         fragment.setArguments(bundle);
         return fragment;
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIdCurrentChannel = getArguments().getLong(ID_CHANNEL);
-        //mNewsList = DataLab.get(getContext()).getWNewsList(mIdCurrentChannel);
         mNewsList = (ArrayList<WNews>) getArguments().getSerializable(ID_PARTNEWS);
-        //Log.e("CREATE FRAGM","mNewsList size = "+mNewsList.size());
         mChannelList = DataLab.get(getContext()).getWChannelsList();
 
     }
     @Override
     public void onResume() {
         super.onResume();
-        //mNewsList = DataLab.get(getContext()).getWNewsList(mIdCurrentChannel);
-        //mChannelList = DataLab.get(getContext()).getWChannelsList();
-        //onActivityCreated(null);
     }
 
     @Nullable
@@ -75,8 +73,7 @@ public class News_list_fragment_viewPager extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-         News_list_adapter adapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
+        News_list_adapter adapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
         mNewsListViewMain.setAdapter(adapter);
         mNewsListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
