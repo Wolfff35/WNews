@@ -14,6 +14,6 @@ public class MySettings {
     public int CURRENT_THEME = R.style.ThemeOverlay_AppCompat;
     public static boolean MARK_AS_READ_IF_OPEN = true; //автоматичевкм помечать как прочитанную при открытии
     public static int NEWS_PER_SCREEN = 6;//количество навостей на странице
-    public static boolean ONLY_UNREADED_NEWS = false;
+    public static boolean ONLY_UNREADED_NEWS = true;
 
 }

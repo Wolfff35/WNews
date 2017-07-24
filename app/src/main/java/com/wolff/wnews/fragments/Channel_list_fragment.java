@@ -30,10 +30,10 @@ import java.util.ArrayList;
 public class Channel_list_fragment extends Fragment {
     private Channel_list_fragment_listener listener1;
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
-    public static final String ID_CHANNEL = "ID_CHANNEL";
+    //public static final String ID_CHANNEL = "ID_CHANNEL";
     private ListView mChannelListViewMain;
     private Menu mOptionsMenu;
-
+    private Channel_list_adapter mAdapter;
     public interface Channel_list_fragment_listener{
         void onChannelSelected(WChannel channel);
     }
@@ -51,8 +51,9 @@ public class Channel_list_fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mChannelList = DataLab.get(getContext()).getWChannelsList();
-        onActivityCreated(null);
+        mAdapter.notifyDataSetChanged();
+        //mChannelList = DataLab.get(getContext()).getWChannelsList();
+        //onActivityCreated(null);
     }
 
 
@@ -70,9 +71,9 @@ public class Channel_list_fragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mChannelList = DataLab.get(getContext()).getWChannelsList();
-        Channel_list_adapter adapter = new Channel_list_adapter(getContext(),mChannelList);
+        mAdapter = new Channel_list_adapter(getContext(),mChannelList);
 
-        mChannelListViewMain.setAdapter(adapter);
+        mChannelListViewMain.setAdapter(mAdapter);
         mChannelListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,6 +92,7 @@ public class Channel_list_fragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener1=null;
+        mOptionsMenu=null;
     }
     //=================
     @Override

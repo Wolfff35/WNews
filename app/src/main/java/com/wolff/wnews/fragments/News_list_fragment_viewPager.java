@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -30,35 +32,47 @@ public class News_list_fragment_viewPager extends Fragment {
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
     public static final String ID_PARTNEWS = "ID_PARTNEWS";
     public static final String ID_CHANNEL = "ID_CHANNEL";
-   // public static final String ID_SCREEN = "ID_SCREEN";
+    public static final String ID_SCREEN = "ID_SCREEN";
     private ListView mNewsListViewMain;
     private long mIdCurrentChannel;
-    //private int mCurrentNewsScreen;
-
+    private int mCurrentNewsScreen;
+    private Menu mOptionsMenu;
+    private News_list_adapter mAdapter;
 
     public interface News_list_fragment_listener{
         void onNewsSelected_vp(ArrayList<WNews> newsList, WNews news);
     }
-    public static News_list_fragment_viewPager newInstance(ArrayList<WNews> partNews,long idChannel){
+    public static News_list_fragment_viewPager newInstance(ArrayList<WNews> partNews,long idChannel,int currentPage){
         News_list_fragment_viewPager fragment = new News_list_fragment_viewPager();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ID_PARTNEWS,partNews);
         bundle.putLong(ID_CHANNEL,idChannel);
-
+        bundle.putInt(ID_SCREEN,currentPage);
         fragment.setArguments(bundle);
         return fragment;
     }
-    @Override
+
+     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIdCurrentChannel = getArguments().getLong(ID_CHANNEL);
-        mNewsList = (ArrayList<WNews>) getArguments().getSerializable(ID_PARTNEWS);
-        mChannelList = DataLab.get(getContext()).getWChannelsList();
-
+         mIdCurrentChannel = getArguments().getLong(ID_CHANNEL);
+         mNewsList = (ArrayList<WNews>) getArguments().getSerializable(ID_PARTNEWS);
+         mChannelList = DataLab.get(getContext()).getWChannelsList();
+         mCurrentNewsScreen=getArguments().getInt(ID_SCREEN);
+         setHasOptionsMenu(true);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        this.mOptionsMenu = menu;
+        inflater.inflate(R.menu.menu_list_news, mOptionsMenu);
+        super.onCreateOptionsMenu(mOptionsMenu,inflater);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+     mAdapter.notifyDataSetChanged();
     }
 
     @Nullable
@@ -73,8 +87,8 @@ public class News_list_fragment_viewPager extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        News_list_adapter adapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
-        mNewsListViewMain.setAdapter(adapter);
+        mAdapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
+        mNewsListViewMain.setAdapter(mAdapter);
         mNewsListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

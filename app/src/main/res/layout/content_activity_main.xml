@@ -3,20 +3,30 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="horizontal">
+              android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/fragment_container_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:visibility="visible">
 
     </LinearLayout>
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager_news_container"
+
+    <LinearLayout
+        android:id="@+id/fragment_container_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.wolff.wnews.activities.ActivityMain">
+        android:orientation="vertical"
+        android:visibility="visible">
 
-    </android.support.v4.view.ViewPager>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager_news_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.wolff.wnews.activities.ActivityMain">
 
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
 </LinearLayout>

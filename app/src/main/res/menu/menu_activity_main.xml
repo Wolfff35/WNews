@@ -21,8 +21,4 @@
             android:id="@+id/action_exit"
             app:showAsAction="never"
             android:title="@string/menu_nav_exit" />
-    <item
-        android:id="@+id/action_share"
-        android:title="@string/menu_action_share"
-        app:showAsAction="never" />
 </menu>

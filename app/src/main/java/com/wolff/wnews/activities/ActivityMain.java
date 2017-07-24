@@ -36,6 +36,9 @@ import com.wolff.wnews.utils.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
 
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 public class ActivityMain extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment_viewPager.News_list_fragment_listener,
         ChannelGroup_list_fragment.ChannelGroup_list_fragment_listener,Channel_list_fragment.Channel_list_fragment_listener {
@@ -44,9 +47,12 @@ public class ActivityMain extends AppCompatActivity
     private DrawerLayout drawer;
 
     private LinearLayout mMainContainer;
+    private LinearLayout mPagerContainer;
     private ViewPager mViewPager_News;
     private int mCurrentNewsScreen=0;//текущий экран новостей
-
+    private ArrayList<WNews> mAllNews;
+    private Fragment mMainFragment;
+    private Fragment mOldFragment;
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +63,7 @@ public class ActivityMain extends AppCompatActivity
         setTheme(new MySettings().CURRENT_THEME);
         setContentView(R.layout.activity_main);
          mMainContainer = (LinearLayout) findViewById(R.id.fragment_container_main);
+         mPagerContainer = (LinearLayout) findViewById(R.id.fragment_container_pager);
          mViewPager_News = (ViewPager) findViewById(R.id.viewPager_news_container);
 
          Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -77,7 +84,9 @@ public class ActivityMain extends AppCompatActivity
         toggle.syncState();
 
         startService(new Intent(this, NewsService.class));
-        displayFragment(null);
+        mMainFragment=null;
+         mOldFragment=null;
+        displayFragment();
 
     }
     @Override
@@ -109,18 +118,21 @@ public class ActivityMain extends AppCompatActivity
                 break;
             }
             case R.id.action_settings:{
-                Settings_fragment fragment = Settings_fragment.newInstance();
-                displayFragment(fragment);
+                mOldFragment=mMainFragment;
+                mMainFragment = Settings_fragment.newInstance();
+                displayFragment();
                 break;
             }
             case R.id.action_edit_groups:{
-                ChannelGroup_list_fragment fragment = ChannelGroup_list_fragment.newInstance();
-                displayFragment(fragment);
+                mOldFragment=mMainFragment;
+                mMainFragment = ChannelGroup_list_fragment.newInstance();
+                displayFragment();
                 break;
             }
             case R.id.action_edit_channels:{
-                Channel_list_fragment fragment = Channel_list_fragment.newInstance();
-                displayFragment(fragment);
+                mOldFragment=mMainFragment;
+                mMainFragment = Channel_list_fragment.newInstance();
+                displayFragment();
                 break;
             }
             default:
@@ -133,50 +145,40 @@ public class ActivityMain extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         mCurrentChannelId = id;
-        displayFragment(null);
+        mCurrentNewsScreen=1;
+        mOldFragment=mMainFragment;
+        mMainFragment=null;
+        displayFragment();
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-     private void displayFragment(Fragment fragment) {
+     private void displayFragment() {
          Log.e("displayFragment","DISPLAY");
-         if(fragment==null){
-             mMainContainer.setVisibility(View.INVISIBLE);
-             mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-             mViewPager_News.setVisibility(View.VISIBLE);
-             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-             mViewPager_News.setLayoutParams(params);
-             DataLab dataLab = DataLab.get(getApplicationContext());
-             final ArrayList<WNews> allNews = dataLab.getWNewsList(mCurrentChannelId);
-             mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
-             mViewPager_News.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-                    @Override
-                    public Fragment getItem(int position) {
-                        mCurrentNewsScreen = position;
-                        ArrayList<WNews> partNews = getPartNews(allNews,mCurrentNewsScreen);
-                        return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId);
-                    }
-
-                    @Override
-                    public int getCount() {
-                        int l = allNews.size();
-                        if(l<=MySettings.NEWS_PER_SCREEN){
-                            return 1;
-                        }else {
-                            return ((l - l % MySettings.NEWS_PER_SCREEN) / MySettings.NEWS_PER_SCREEN);
-                        }
-                    }
-                });
-         }else {
-             mMainContainer.setVisibility(View.VISIBLE);
-             mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-             mViewPager_News.setVisibility(View.INVISIBLE);
-             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-             mViewPager_News.setLayoutParams(params);
+         if(mOldFragment!=null){
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
-             fragmentTransaction.replace(R.id.fragment_container_main, fragment);
+             fragmentTransaction.remove(mOldFragment);
              fragmentTransaction.commit();
-        }
+             mOldFragment=null;
+         }
+         if(mMainFragment==null){
+
+             changeLayouts(true);
+             DataLab dataLab = DataLab.get(getApplicationContext());
+             mAllNews = dataLab.getWNewsList(mCurrentChannelId);
+             mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
+             mViewPager_News.setAdapter(fragmentStatePagerAdapter);
+
+             mViewPager_News.setCurrentItem(mCurrentNewsScreen);
+         }else {
+             changeLayouts(false);
+
+             FragmentTransaction fragmentTransaction;
+             fragmentTransaction = getSupportFragmentManager().beginTransaction();
+             fragmentTransaction.replace(R.id.fragment_container_main, mMainFragment);
+             fragmentTransaction.commit();
+         }
+
     }
     private ArrayList<WNews> getPartNews(ArrayList<WNews> allNews,int currentScreen){
         ArrayList<WNews> partNews = new ArrayList<>(MySettings.NEWS_PER_SCREEN);
@@ -187,7 +189,39 @@ public class ActivityMain extends AppCompatActivity
         }
     return partNews;
     }
+    private void changeLayouts(boolean isViewPager){
+        if(isViewPager){
+            mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            mMainContainer.setVisibility(View.GONE);
+            mPagerContainer.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+            mPagerContainer.setVisibility(View.VISIBLE);
+           }else {
+            mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+            mMainContainer.setVisibility(View.VISIBLE);
+            mPagerContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            mPagerContainer.setVisibility(View.GONE);
+            mMainContainer.invalidate();
+            mPagerContainer.invalidate();
+        }
+    }
+    private FragmentStatePagerAdapter fragmentStatePagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        @Override
+        public Fragment getItem(int position) {
+            mCurrentNewsScreen = position;
+            ArrayList<WNews> partNews = getPartNews(mAllNews,mCurrentNewsScreen);
+            return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId,mCurrentNewsScreen);
+        }
 
+        @Override
+        public int getCount() {
+            int l = mAllNews.size();
+            if(l<=MySettings.NEWS_PER_SCREEN){
+                return 1;
+            }else {
+                return ((l - l % MySettings.NEWS_PER_SCREEN) / MySettings.NEWS_PER_SCREEN);
+            }
+        }
+    };
     @Override
     public void onChannelGroupSelected(WChannelGroup group) {
         Intent intent = ChannelGroup_item_activity.newIntent(getApplicationContext(),group);

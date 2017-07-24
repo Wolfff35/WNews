@@ -65,7 +65,7 @@ public class News_item_fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
         mNewsItem = (WNews) getArguments().getSerializable(ARG_NEWS_ITEM);
         ScreenSize = new Point();
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -116,13 +116,18 @@ public class News_item_fragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         this.mOptionsMenu = menu;
-        //inflater.inflate(R.menu.menu_item_actions,mOptionsMenu);
+        inflater.inflate(R.menu.menu_item_news,mOptionsMenu);
         super.onCreateOptionsMenu(mOptionsMenu, inflater);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_item_save: {
+            case R.id.action_item_share: {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT,mNewsItem.getLink());
+                intent.putExtra(Intent.EXTRA_SUBJECT,"SSSSHARE");
+                startActivity(Intent.createChooser(intent,"MY-TITLE"));
                 break;
             }
             default:
