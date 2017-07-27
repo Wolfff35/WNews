@@ -10,6 +10,12 @@
             android:title="Частота обновления,минут">
         </android.support.v7.preference.EditTextPreference>
         <android.support.v7.preference.EditTextPreference
+            android:key="deleteNewsPeriod_days"
+            android:defaultValue="0"
+            android:summary="Удалять новости старше, дней"
+            android:title="Удалять старые новости, 0-нет">
+        </android.support.v7.preference.EditTextPreference>
+        <android.support.v7.preference.EditTextPreference
             android:key="countNewsPerScreen"
             android:defaultValue="5"
             android:summary="Количество новостей на странице"

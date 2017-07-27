@@ -29,16 +29,14 @@ public class News_list_adapter extends BaseAdapter{
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<WNews> mNewsList;
-    //private ArrayList<WChannel> mChannelList;
     private boolean mIsLightTheme;
+
     public News_list_adapter(Context context, ArrayList<WNews> newsList){
         mContext=context;
         mNewsList = newsList;
-        //mChannelList = channelList;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         mIsLightTheme = preferences.getBoolean("isLightTheme",false);
-        //Log.e("showPicassoIndicator","showPicassoIndicator = "+mShowPicassoIndicator);
     }
     @Override
     public int getCount() {
@@ -65,7 +63,7 @@ public class News_list_adapter extends BaseAdapter{
         TextView tvTitleNews = (TextView)view.findViewById(R.id.tvTitleNews);
         TextView tvDatePubNews = (TextView)view.findViewById(R.id.tvDatePubNews);
         WNews news = (WNews)getItem(position);
-        tvTitleNews.setText(news.getId()+" - "+news.getTitle());
+        tvTitleNews.setText(news.getTitle());
         DateUtils dateUtils = new DateUtils();
         //
         if(mIsLightTheme){
