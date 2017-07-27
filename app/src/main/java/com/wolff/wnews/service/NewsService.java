@@ -28,7 +28,6 @@ public class NewsService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        //Log.e(TAG,"Bind");
         return null;
     }
 
@@ -51,7 +50,7 @@ public class NewsService extends Service {
 
     private void deleteOldNews(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        final int days = preferences.getInt("deleteNewsPeriod_days",0);
+        final int days = Integer.valueOf(preferences.getString("deleteNewsPeriod_days","0"));
         if(days>0) {
             final ScheduledExecutorService scheduler =
                     Executors.newScheduledThreadPool(3);

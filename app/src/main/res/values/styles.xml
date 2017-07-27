@@ -4,6 +4,7 @@
     <attr name="menu_icon_delete" format="reference"/>
     <attr name="menu_icon_save" format="reference"/>
     <attr name="menu_icon_share" format="reference"/>
+    <attr name="menu_icon_mark_as_read" format="reference"/>
 
     <attr name="toolbar_theme" format="reference"/>
 
@@ -22,6 +23,7 @@
           <item name="menu_icon_delete">@drawable/ic_delete_white</item>
           <item name="menu_icon_save">@drawable/ic_save_white</item>
           <item name="menu_icon_share">@drawable/ic_share_white</item>
+          <item name="menu_icon_mark_as_read">@drawable/ic_mark_all_white</item>
 
           <item name="toolbar_theme">@style/Base_ToolbarStyle_Dark</item>
 
@@ -40,6 +42,7 @@
         <item name="menu_icon_delete">@drawable/ic_delete_black</item>
         <item name="menu_icon_save">@drawable/ic_save_black</item>
         <item name="menu_icon_share">@drawable/ic_share_black</item>
+        <item name="menu_icon_mark_as_read">@drawable/ic_mark_all_black</item>
 
         <item name="toolbar_theme">@style/Base_ToolbarStyle_Light</item>
 

@@ -35,6 +35,10 @@
             android:key="markAsReadIfOpen" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
+            android:title="Отмечать как прочитанные при листании"
+            android:key="markAsReadIfSwap" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
             android:title="Светлая тема приложения"
             android:key="isLightTheme" />
     </android.support.v7.preference.PreferenceCategory>

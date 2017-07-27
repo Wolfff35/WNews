@@ -1,12 +1,15 @@
 package com.wolff.wnews.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 
 import com.wolff.wnews.R;
 import com.wolff.wnews.adapters.News_list_adapter;
+import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WNews;
 
 import java.util.ArrayList;
@@ -62,6 +66,12 @@ public class News_list_fragment_viewPager extends Fragment {
          mCurrentNewsScreen=getArguments().getInt(ID_SCREEN);
          mCountNewsScreen=getArguments().getInt(ID_COUNTPAGE);
          setHasOptionsMenu(true);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean mark_auto = preferences.getBoolean("markAsReadIfSwap",false);
+        if (mark_auto){
+            markNewsAsRead();
+        }
+
     }
 
     @Override
@@ -69,6 +79,20 @@ public class News_list_fragment_viewPager extends Fragment {
         this.mOptionsMenu = menu;
         inflater.inflate(R.menu.menu_list_news, mOptionsMenu);
         super.onCreateOptionsMenu(mOptionsMenu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_mark_all_as_read: {
+                markNewsAsRead();
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -111,5 +135,15 @@ public class News_list_fragment_viewPager extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener=null;
+    }
+    private void markNewsAsRead(){
+        DataLab dataLab = DataLab.get(getContext());
+        for(WNews newsItem:mNewsList){
+            if(!newsItem.isReaded()){
+                newsItem.setReaded(true);
+                dataLab.news_update(newsItem);
+            }
+        }
+
     }
 }

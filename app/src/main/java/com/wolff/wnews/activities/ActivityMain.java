@@ -152,10 +152,8 @@ public class ActivityMain extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         mCurrentChannelId = item.getItemId();
-        //mCurrentNewsScreen=0;
         mOldFragment=mMainFragment;
         mMainFragment=null;
-        //Log.e("SELECT","current item = "+mCurrentNewsScreen);
         displayFragment();
         setWindowTitle();
         drawer.closeDrawer(GravityCompat.START);
@@ -177,9 +175,6 @@ public class ActivityMain extends AppCompatActivity
              mAllNews = dataLab.getWNewsList(mCurrentChannelId);
              mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
              mViewPager_News.setAdapter(mFragmentStatePagerAdapter);
-            // Log.e("DISPLAY","2 current item = "+mCurrentNewsScreen);
-             //mViewPager_News.setCurrentItem(0);
-             //mViewPager_News.setCurrentItem(mCurrentNewsScreen);
              mViewPager_News.addOnPageChangeListener(onPageChangeListener);
          }else {
              changeLayouts(false);
@@ -191,10 +186,8 @@ public class ActivityMain extends AppCompatActivity
 
     }
     private ArrayList<WNews> getPartNews(ArrayList<WNews> allNews,int currentScreen){
-        //Log.e("GET PART","currentScreen = "+currentScreen);
          ArrayList<WNews> partNews = new ArrayList<>(mCountNewsPerScreen);
         for(int i=currentScreen*mCountNewsPerScreen;i<currentScreen*mCountNewsPerScreen+mCountNewsPerScreen;i++){
-            //Log.e("i",""+i);
             if(i<allNews.size()) {
                 partNews.add(allNews.get(i));
             }
@@ -221,8 +214,6 @@ public class ActivityMain extends AppCompatActivity
     private FragmentStatePagerAdapter mFragmentStatePagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
         @Override
         public Fragment getItem(int position) {
-            //Log.e("GET ITEM","pos = "+position);
-            //mCurrentNewsScreen = position;
             ArrayList<WNews> partNews = getPartNews(mAllNews,position);
             return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId,position,mCountNewsScreen);
         }
@@ -256,9 +247,7 @@ public class ActivityMain extends AppCompatActivity
 
         @Override
         public void onPageSelected(int position) {
-
            // setTitle(position);
-
             //Log.e("PAGE SELECTED",""+position);
             /*if(){
                 ArrayList<WNews> partNews = getPartNews(mAllNews,position);
