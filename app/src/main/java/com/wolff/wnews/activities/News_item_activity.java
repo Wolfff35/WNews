@@ -2,8 +2,10 @@ package com.wolff.wnews.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,7 +18,6 @@ import com.wolff.wnews.R;
 import com.wolff.wnews.fragments.News_item_fragment;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WNews;
-import com.wolff.wnews.utils.MySettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,13 @@ public class News_item_activity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean isLightTheme = preferences.getBoolean("isLightTheme",false);
+        if(isLightTheme){
+            setTheme(R.style.AppThemeLight);
+        }else {
+            setTheme(R.style.AppTheme);
+        }
         setContentView(R.layout.news_item_activity);
         mViewPager = (ViewPager)findViewById(R.id.viewPager_container);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -67,6 +75,7 @@ public class News_item_activity extends AppCompatActivity {
         }
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
+
             @Override
             public Fragment getItem(int position) {
                 WNews item = mNewsList.get(position);
@@ -88,7 +97,7 @@ public class News_item_activity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 Log.e("onPageSelected","PAGE = "+position);
                 WNews item = mNewsList.get(position);
-                 //if(MySettings.MARK_AS_READ_IF_OPEN&&!item.isReaded()){
+                 //if(&&!item.isReaded()){
                  //    item.setReaded(true);
                  //    DataLab.get(getApplicationContext()).news_update(item);
                  //}

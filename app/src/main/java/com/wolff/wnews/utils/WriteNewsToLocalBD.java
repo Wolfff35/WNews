@@ -1,6 +1,8 @@
 package com.wolff.wnews.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.wolff.wnews.localdb.DataLab;
@@ -39,6 +41,8 @@ public class WriteNewsToLocalBD {
 //--------------------------------------------------------
 public void readNewsFromChannelAndWriteToLocalBD(WChannel channel) {
    // Log.e("readNews", "begin");
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+    boolean updateNewsPubDate = preferences.getBoolean("updateNewsPubDate",false);
     try {
         //Log.e("readNews", "1 " + channel.getLink());
         URL url = new URL(channel.getLink());
@@ -124,7 +128,7 @@ public void readNewsFromChannelAndWriteToLocalBD(WChannel channel) {
                         //Log.e("readNews", "--Already exist!!"+i+" "+_pubDate+" ; "+_guid);
 
                         Date newDate = new Date(_pubDate);
-                        if(new MySettings().UPDATE_NEWS_PUBDATE&&newDate!=null) {
+                        if(updateNewsPubDate&&newDate!=null) {
                             if ((newDate.getTime() - currNews.getPubDate().getTime() > 10000)) {
                                 Date oldDate = currNews.getPubDate();
                                 currNews.setPubDate(new Date(_pubDate));
@@ -148,7 +152,7 @@ public void readNewsFromChannelAndWriteToLocalBD(WChannel channel) {
     } catch (MalformedURLException e) {
         Log.e("readNews", "2");
     } catch (IOException e) {
-        Log.e("readNews", "3 "+e.getLocalizedMessage());
+       // Log.e("readNews", "3 "+e.getLocalizedMessage());
     } catch (ParserConfigurationException e) {
         Log.e("readNews", "4");
     } catch (SAXException e) {

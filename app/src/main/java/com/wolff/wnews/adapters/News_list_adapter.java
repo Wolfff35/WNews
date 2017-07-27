@@ -1,6 +1,10 @@
 package com.wolff.wnews.adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +18,6 @@ import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.utils.DateUtils;
-import com.wolff.wnews.utils.MySettings;
 
 import java.util.ArrayList;
 
@@ -27,12 +30,17 @@ public class News_list_adapter extends BaseAdapter{
     private LayoutInflater mInflater;
     private ArrayList<WNews> mNewsList;
     private ArrayList<WChannel> mChannelList;
-
+    private boolean mShowPicassoIndicator;
+    private boolean mIsLightTheme;
     public News_list_adapter(Context context, ArrayList<WNews> newsList,ArrayList<WChannel>channelList){
         mContext=context;
         mNewsList = newsList;
         mChannelList = channelList;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        mShowPicassoIndicator = preferences.getBoolean("showPicassoIndicator",false);
+        mIsLightTheme = preferences.getBoolean("isLightTheme",false);
+        //Log.e("showPicassoIndicator","showPicassoIndicator = "+mShowPicassoIndicator);
     }
     @Override
     public int getCount() {
@@ -62,10 +70,18 @@ public class News_list_adapter extends BaseAdapter{
         tvTitleNews.setText(news.getId()+" - "+news.getTitle());
         DateUtils dateUtils = new DateUtils();
         //
-        if(news.isReaded()){
-            tvTitleNews.setTextColor(mContext.getResources().getColor(R.color.color_readed_news));
+        if(mIsLightTheme){
+            if(news.isReaded()){
+                tvTitleNews.setTextColor(ContextCompat.getColor(mContext,R.color.color_readed_news_light));
+            }else {
+                tvTitleNews.setTextColor(ContextCompat.getColor(mContext,R.color.color_unreaded_news_light));
+            }
         }else {
-            tvTitleNews.setTextColor(mContext.getResources().getColor(R.color.color_unreaded_news));
+            if(news.isReaded()){
+                tvTitleNews.setTextColor(ContextCompat.getColor(mContext,R.color.color_readed_news_dark));
+            }else {
+                tvTitleNews.setTextColor(ContextCompat.getColor(mContext,R.color.color_unreaded_news_dark));
+            }
         }
         String time_interval = dateUtils.calculateInterval(news.getPubDate());
         DataLab dataLab = DataLab.get(mContext);
@@ -77,7 +93,7 @@ public class News_list_adapter extends BaseAdapter{
         tvDatePubNews.setText(dateUtils.dateToString(news.getPubDate(),DateUtils.DATE_FORMAT_VID)+" - "+time_interval+" - "+currChannel);
         if(!news.getEnclosure().isEmpty()) {
             Picasso picasso = Picasso.with(mContext);
-            if(new MySettings().SHOW_PICASSO_INDICATOR) {
+            if(mShowPicassoIndicator) {
                 picasso.setIndicatorsEnabled(true);
             }
             picasso.load(news.getEnclosure())

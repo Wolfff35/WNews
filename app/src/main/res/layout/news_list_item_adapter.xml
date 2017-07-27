@@ -15,8 +15,7 @@
             android:id="@+id/ivPictureNews"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            app:srcCompat="@drawable/ic_menu_camera"/>
+            android:layout_margin="5dp"/>
     </LinearLayout>
 
     <LinearLayout

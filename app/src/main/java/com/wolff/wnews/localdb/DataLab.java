@@ -2,15 +2,15 @@ package com.wolff.wnews.localdb;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.preference.PreferenceManager;
 
 import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WChannelGroup;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.utils.DateUtils;
-import com.wolff.wnews.utils.MySettings;
 
 import java.util.ArrayList;
 
@@ -42,7 +42,9 @@ private DbCursorWrapper queryWNews(long idChannel){
     String groupBy = null;
     String having = null;
     String orderBy = DbSchema.BaseColumns.PUB_DATE+" DESC";
-    if(MySettings.ONLY_UNREADED_NEWS){
+    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+    boolean onlyUnreadedNews = preferences.getBoolean("onlyUnreadedNews",false);
+    if(onlyUnreadedNews){
         if (idChannel == 0) {
             selection = DbSchema.Table_News.Cols.IS_READ + " = ?";
             selectionArgs = new String[]{"0"};

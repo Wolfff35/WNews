@@ -3,13 +3,13 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
      <item
         android:id="@+id/action_item_save"
-        android:icon="@drawable/ic_save_black"
+        android:icon="?attr/menu_icon_save"
         android:orderInCategory="100"
         android:title="@string/menu_action_item_save"
         app:showAsAction="ifRoom|withText"/>
     <item
         android:id="@+id/action_item_delete"
-        android:icon="@drawable/ic_delete_black"
+        android:icon="?attr/menu_icon_delete"
         android:orderInCategory="100"
         android:title="@string/menu_action_delete"
         app:showAsAction="ifRoom|withText"/>

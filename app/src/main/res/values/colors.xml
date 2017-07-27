@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#b6b6b6</color>
-    <color name="colorPrimaryDark">#606161</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#ff0400</color>
 
-    <color name="color_readed_news">#acacac</color>
-    <color name="color_unreaded_news">#000000</color>
+    <color name="colorPrimary_Light">#dcdbdb</color>
+    <color name="colorPrimaryDark_Light">#868585</color>
+    <color name="colorAccent_Light">#ff0400</color>
+
+    <color name="color_readed_news_dark">#767676</color>
+    <color name="color_unreaded_news_dark">#fffefe</color>
+
+    <color name="color_readed_news_light">#767676</color>
+    <color name="color_unreaded_news_light">#000000</color>
+
 </resources>

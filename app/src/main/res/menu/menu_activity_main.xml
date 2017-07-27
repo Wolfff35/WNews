@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
         <item
-            android:id="@+id/action_switch_theme"
-            app:showAsAction="never"
-            android:title="@string/menu_nav_switch_theme" />
-        <item
             android:id="@+id/action_settings"
             app:showAsAction="never"
             android:title="@string/menu_nav_settings" />

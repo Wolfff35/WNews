@@ -13,12 +13,15 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.wolff.wnews.R;
 import com.wolff.wnews.adapters.News_list_adapter;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WNews;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -33,33 +36,40 @@ public class News_list_fragment_viewPager extends Fragment {
     public static final String ID_PARTNEWS = "ID_PARTNEWS";
     public static final String ID_CHANNEL = "ID_CHANNEL";
     public static final String ID_SCREEN = "ID_SCREEN";
+    public static final String ID_COUNTPAGE = "ID_COUNTPAGE";
     private ListView mNewsListViewMain;
+
+    private TextView tvPageNumber;
     private long mIdCurrentChannel;
     private int mCurrentNewsScreen;
+    private int mCountNewsScreen;
     private Menu mOptionsMenu;
     private News_list_adapter mAdapter;
 
     public interface News_list_fragment_listener{
         void onNewsSelected_vp(ArrayList<WNews> newsList, WNews news);
     }
-    public static News_list_fragment_viewPager newInstance(ArrayList<WNews> partNews,long idChannel,int currentPage){
+    public static News_list_fragment_viewPager newInstance(ArrayList<WNews> partNews,long idChannel,int currentPage,int countPage){
         News_list_fragment_viewPager fragment = new News_list_fragment_viewPager();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ID_PARTNEWS,partNews);
         bundle.putLong(ID_CHANNEL,idChannel);
         bundle.putInt(ID_SCREEN,currentPage);
+        bundle.putInt(ID_COUNTPAGE,countPage);
         fragment.setArguments(bundle);
         return fragment;
     }
 
-     @Override
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
          mIdCurrentChannel = getArguments().getLong(ID_CHANNEL);
          mNewsList = (ArrayList<WNews>) getArguments().getSerializable(ID_PARTNEWS);
          mChannelList = DataLab.get(getContext()).getWChannelsList();
          mCurrentNewsScreen=getArguments().getInt(ID_SCREEN);
-         setHasOptionsMenu(true);
+         mCountNewsScreen=getArguments().getInt(ID_COUNTPAGE);
+          setHasOptionsMenu(true);
     }
 
     @Override
@@ -81,6 +91,7 @@ public class News_list_fragment_viewPager extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view =  inflater.inflate(R.layout.list_fragment,container,false);
         mNewsListViewMain = (ListView)view.findViewById(R.id.lvListMain);
+        tvPageNumber = (TextView)view.findViewById(R.id.tvPageNumber);
         return view;
     }
 
@@ -88,6 +99,7 @@ public class News_list_fragment_viewPager extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mAdapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
+        tvPageNumber.setText("Page "+(mCurrentNewsScreen+1)+" from "+mCountNewsScreen);
         mNewsListViewMain.setAdapter(mAdapter);
         mNewsListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -95,12 +107,8 @@ public class News_list_fragment_viewPager extends Fragment {
                 listener.onNewsSelected_vp(mNewsList,mNewsList.get(position));
             }
         });
-         if(mIdCurrentChannel==0){
-            getActivity().setTitle(getResources().getString(R.string.app_name)+" Все новости");
-        }else {
-            getActivity().setTitle(getResources().getString(R.string.app_name)+" "+DataLab.get(getContext()).findChannelById(mIdCurrentChannel, mChannelList).getName());
-        }
      }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -112,5 +120,4 @@ public class News_list_fragment_viewPager extends Fragment {
         super.onDetach();
         listener=null;
     }
-
 }

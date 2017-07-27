@@ -1,7 +1,10 @@
 package com.wolff.wnews.activities;
 
+import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
@@ -30,14 +33,12 @@ import com.wolff.wnews.model.WChannelGroup;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.service.NewsService;
 import com.wolff.wnews.utils.CreateMenu;
-import com.wolff.wnews.utils.MySettings;
 import com.wolff.wnews.utils.TestData;
 import com.wolff.wnews.utils.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class ActivityMain extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment_viewPager.News_list_fragment_listener,
@@ -50,25 +51,31 @@ public class ActivityMain extends AppCompatActivity
     private LinearLayout mPagerContainer;
     private ViewPager mViewPager_News;
     private int mCurrentNewsScreen=0;//текущий экран новостей
+    private int mCountNewsScreen;
     private ArrayList<WNews> mAllNews;
     private Fragment mMainFragment;
     private Fragment mOldFragment;
+
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //TEST
         TestData testData = new TestData();
         testData.fillTestData(getApplicationContext());
-
-        setTheme(new MySettings().CURRENT_THEME);
+         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+         boolean isLightTheme = preferences.getBoolean("isLightTheme",false);
+        if(isLightTheme){
+            setTheme(R.style.AppThemeLight_NoActionBar);
+        }else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
         setContentView(R.layout.activity_main);
-         mMainContainer = (LinearLayout) findViewById(R.id.fragment_container_main);
-         mPagerContainer = (LinearLayout) findViewById(R.id.fragment_container_pager);
-         mViewPager_News = (ViewPager) findViewById(R.id.viewPager_news_container);
+        mMainContainer = (LinearLayout) findViewById(R.id.fragment_container_main);
+        mPagerContainer = (LinearLayout) findViewById(R.id.fragment_container_pager);
+        mViewPager_News = (ViewPager) findViewById(R.id.viewPager_news_container);
 
-         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -80,15 +87,24 @@ public class ActivityMain extends AppCompatActivity
                     new CreateMenu().createMenu(getApplicationContext(),navigationView.getMenu());
                 }
           };
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         startService(new Intent(this, NewsService.class));
         mMainFragment=null;
-         mOldFragment=null;
+        mOldFragment=null;
         displayFragment();
+        setWindowTitle();
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fragmentStatePagerAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -112,9 +128,6 @@ public class ActivityMain extends AppCompatActivity
             case R.id.action_exit:{
                 stopService(new Intent(this,NewsService.class));
                 finish();
-                break;
-            }
-            case R.id.action_switch_theme:{
                 break;
             }
             case R.id.action_settings:{
@@ -145,15 +158,16 @@ public class ActivityMain extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         mCurrentChannelId = id;
-        mCurrentNewsScreen=1;
+        mCurrentNewsScreen=0;
         mOldFragment=mMainFragment;
         mMainFragment=null;
         displayFragment();
+        setWindowTitle();
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
      private void displayFragment() {
-         Log.e("displayFragment","DISPLAY");
+         //Log.e("displayFragment","DISPLAY");
          if(mOldFragment!=null){
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -170,6 +184,8 @@ public class ActivityMain extends AppCompatActivity
              mViewPager_News.setAdapter(fragmentStatePagerAdapter);
 
              mViewPager_News.setCurrentItem(mCurrentNewsScreen);
+             //mViewPager_News.setOffscreenPageLimit(0);
+             mViewPager_News.addOnPageChangeListener(onPageChangeListener);
          }else {
              changeLayouts(false);
 
@@ -181,8 +197,10 @@ public class ActivityMain extends AppCompatActivity
 
     }
     private ArrayList<WNews> getPartNews(ArrayList<WNews> allNews,int currentScreen){
-        ArrayList<WNews> partNews = new ArrayList<>(MySettings.NEWS_PER_SCREEN);
-        for(int i=currentScreen*MySettings.NEWS_PER_SCREEN;i<currentScreen*MySettings.NEWS_PER_SCREEN+MySettings.NEWS_PER_SCREEN;i++){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int newsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
+        ArrayList<WNews> partNews = new ArrayList<>(newsPerScreen);
+        for(int i=currentScreen*newsPerScreen;i<currentScreen*newsPerScreen+newsPerScreen;i++){
             if(i<allNews.size()) {
                 partNews.add(allNews.get(i));
             }
@@ -209,17 +227,55 @@ public class ActivityMain extends AppCompatActivity
         public Fragment getItem(int position) {
             mCurrentNewsScreen = position;
             ArrayList<WNews> partNews = getPartNews(mAllNews,mCurrentNewsScreen);
-            return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId,mCurrentNewsScreen);
+            return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId,mCurrentNewsScreen,mCountNewsScreen);
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+             super.getItemPosition(object);
+            return POSITION_NONE;
         }
 
         @Override
         public int getCount() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            int newsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
             int l = mAllNews.size();
-            if(l<=MySettings.NEWS_PER_SCREEN){
-                return 1;
+            if(l<=newsPerScreen){
+                mCountNewsScreen=1;
             }else {
-                return ((l - l % MySettings.NEWS_PER_SCREEN) / MySettings.NEWS_PER_SCREEN);
+                mCountNewsScreen = ((l - l % newsPerScreen) / newsPerScreen);
             }
+            return mCountNewsScreen;
+        }
+    };
+
+    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+           // setTitle(position);
+            //Log.e("PAGE SELECTED",""+position);
+            /*if(){
+                ArrayList<WNews> partNews = getPartNews(mAllNews,position);
+                for(WNews item:partNews){
+                    if(!item.isReaded()){
+                        item.setReaded(true);
+                        Log.e("MARL READED","item # "+item.getId());
+                        DataLab.get(getApplicationContext()).news_update(item);
+                    }
+                }
+                fragmentStatePagerAdapter.notifyDataSetChanged();
+            }*/
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
         }
     };
     @Override
@@ -237,12 +293,25 @@ public class ActivityMain extends AppCompatActivity
 
     @Override
     public void onNewsSelected_vp(ArrayList<WNews> newsList, WNews news) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean markAsReadIfOpen = preferences.getBoolean("markAsReadIfOpen",false);
         Intent intent = News_item_activity.newIntent(getApplicationContext(),newsList,news);
-        if(MySettings.MARK_AS_READ_IF_OPEN&&!news.isReaded()){
+        if(markAsReadIfOpen&&!news.isReaded()){
             news.setReaded(true);
             DataLab.get(getApplicationContext()).news_update(news);
         }
         startActivity(intent);
 
     }
+    private void setWindowTitle(){
+        if(mCurrentChannelId==0){
+            setTitle(getResources().getString(R.string.app_name)+" Все новости ");
+        }else {
+            setTitle(getResources().getString(R.string.app_name)+" "+DataLab.get(getApplicationContext()).findChannelById(mCurrentChannelId,
+                    DataLab.get(getApplicationContext()).getWChannelsList()).getName());
+        }
+
+    }
+
+
 }

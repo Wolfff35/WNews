@@ -3,16 +3,17 @@ package com.wolff.wnews.service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
-import com.wolff.wnews.utils.MySettings;
 import com.wolff.wnews.utils.WriteNewsToLocalBD;
 
 import java.util.ArrayList;
@@ -53,12 +54,14 @@ public class NewsService extends Service {
         super.onDestroy();
     }
     private void getAllNews(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final ScheduledExecutorService scheduler =
                 Executors.newScheduledThreadPool(3);
         scheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 //Log.e("TASK","RUN "+new Date()+"    online = "+isOnline());
+
                 if(!isOnline()){
                     //Log.e("INTERNET","NOT ONLINE");
                     return;
@@ -74,7 +77,7 @@ public class NewsService extends Service {
                     //Log.e("SERVICE","Обновлен канал "+item.getName());
                 }
              }
-    },0, new MySettings().UPDATE_PERIOD_MINUTES, TimeUnit.MINUTES);
+    },0, Integer.valueOf(preferences.getString("updatePeriod_minutes","5")), TimeUnit.MINUTES);
     }
     public boolean isOnline() {
         ConnectivityManager cm =

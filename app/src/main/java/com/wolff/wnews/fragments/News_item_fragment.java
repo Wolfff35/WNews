@@ -1,9 +1,11 @@
 package com.wolff.wnews.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -27,11 +29,8 @@ import com.wolff.wnews.R;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WNews;
-import com.wolff.wnews.service.GetChannelInfo_Task;
 import com.wolff.wnews.utils.DateUtils;
-import com.wolff.wnews.utils.MySettings;
 
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by wolff on 13.07.2017.
@@ -41,6 +40,7 @@ public class News_item_fragment extends Fragment {
     private static final String ARG_NEWS_ITEM = "WNewsItem";
     private WNews mNewsItem;
     private Menu mOptionsMenu;
+    private boolean mShowPicassoIndicator;
 
     TextView tvNewsItem_Name;
     TextView tvNewsItem_Channel_PubDate;
@@ -66,6 +66,8 @@ public class News_item_fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mShowPicassoIndicator = preferences.getBoolean("showPicassoIndicator",false);
         mNewsItem = (WNews) getArguments().getSerializable(ARG_NEWS_ITEM);
         ScreenSize = new Point();
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -91,7 +93,7 @@ public class News_item_fragment extends Fragment {
 
         if(!mNewsItem.getEnclosure().isEmpty()) {
             Picasso picasso = Picasso.with(getContext());
-            if(new MySettings().SHOW_PICASSO_INDICATOR) {
+            if(mShowPicassoIndicator) {
                 picasso.setIndicatorsEnabled(true);
             }
             picasso.load(mNewsItem.getEnclosure())
