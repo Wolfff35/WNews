@@ -29,13 +29,13 @@ public class News_list_adapter extends BaseAdapter{
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<WNews> mNewsList;
-    private ArrayList<WChannel> mChannelList;
+    //private ArrayList<WChannel> mChannelList;
     private boolean mShowPicassoIndicator;
     private boolean mIsLightTheme;
-    public News_list_adapter(Context context, ArrayList<WNews> newsList,ArrayList<WChannel>channelList){
+    public News_list_adapter(Context context, ArrayList<WNews> newsList){
         mContext=context;
         mNewsList = newsList;
-        mChannelList = channelList;
+        //mChannelList = channelList;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         mShowPicassoIndicator = preferences.getBoolean("showPicassoIndicator",false);
@@ -85,7 +85,7 @@ public class News_list_adapter extends BaseAdapter{
         }
         String time_interval = dateUtils.calculateInterval(news.getPubDate());
         DataLab dataLab = DataLab.get(mContext);
-        WChannel ch = dataLab.findChannelById(news.getIdChannel(),mChannelList);
+        WChannel ch = dataLab.findChannelById(news.getIdChannel(),dataLab.getWChannelsList());
         String currChannel="";
         if(ch!=null) {
             currChannel = ch.getName();

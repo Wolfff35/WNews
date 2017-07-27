@@ -1,6 +1,6 @@
 package com.wolff.wnews.activities;
 
-import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,17 +44,20 @@ public class ActivityMain extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,News_list_fragment_viewPager.News_list_fragment_listener,
         ChannelGroup_list_fragment.ChannelGroup_list_fragment_listener,Channel_list_fragment.Channel_list_fragment_listener {
 
-    private int mCurrentChannelId;
     private DrawerLayout drawer;
+
+    private Fragment mMainFragment;
+    private Fragment mOldFragment;
 
     private LinearLayout mMainContainer;
     private LinearLayout mPagerContainer;
     private ViewPager mViewPager_News;
-    private int mCurrentNewsScreen=0;//текущий экран новостей
-    private int mCountNewsScreen;
+
+   //private int mCurrentNewsScreen=0;//текущий экран новостей
+    private int mCountNewsScreen;// количество страниц/экранов
+    private int mCurrentChannelId=0;
+    private int mCountNewsPerScreen;//новостей на странице/экране
     private ArrayList<WNews> mAllNews;
-    private Fragment mMainFragment;
-    private Fragment mOldFragment;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +65,13 @@ public class ActivityMain extends AppCompatActivity
         //TEST
         TestData testData = new TestData();
         testData.fillTestData(getApplicationContext());
-         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-         boolean isLightTheme = preferences.getBoolean("isLightTheme",false);
-        if(isLightTheme){
-            setTheme(R.style.AppThemeLight_NoActionBar);
-        }else {
-            setTheme(R.style.AppTheme_NoActionBar);
-        }
+        setActivityTheme();
         setContentView(R.layout.activity_main);
         mMainContainer = (LinearLayout) findViewById(R.id.fragment_container_main);
         mPagerContainer = (LinearLayout) findViewById(R.id.fragment_container_pager);
         mViewPager_News = (ViewPager) findViewById(R.id.viewPager_news_container);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mCountNewsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,24 +91,20 @@ public class ActivityMain extends AppCompatActivity
         toggle.syncState();
 
         startService(new Intent(this, NewsService.class));
-        mMainFragment=null;
-        mOldFragment=null;
         displayFragment();
         setWindowTitle();
 
     }
-
-    @Override
+     @Override
     protected void onResume() {
         super.onResume();
-        fragmentStatePagerAdapter.notifyDataSetChanged();
+        mFragmentStatePagerAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-
         } else {
             super.onBackPressed();
         }
@@ -156,18 +151,19 @@ public class ActivityMain extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        mCurrentChannelId = id;
-        mCurrentNewsScreen=0;
+        mCurrentChannelId = item.getItemId();
+        //mCurrentNewsScreen=0;
         mOldFragment=mMainFragment;
         mMainFragment=null;
+        //Log.e("SELECT","current item = "+mCurrentNewsScreen);
         displayFragment();
         setWindowTitle();
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
      private void displayFragment() {
-         //Log.e("displayFragment","DISPLAY");
+            // Log.e("DISPLAY","1 current item = "+mCurrentNewsScreen);
+         // mCurrentNewsScreen=mCurrentNewsScreen+1;
          if(mOldFragment!=null){
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -176,19 +172,17 @@ public class ActivityMain extends AppCompatActivity
              mOldFragment=null;
          }
          if(mMainFragment==null){
-
              changeLayouts(true);
              DataLab dataLab = DataLab.get(getApplicationContext());
              mAllNews = dataLab.getWNewsList(mCurrentChannelId);
              mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
-             mViewPager_News.setAdapter(fragmentStatePagerAdapter);
-
-             mViewPager_News.setCurrentItem(mCurrentNewsScreen);
-             //mViewPager_News.setOffscreenPageLimit(0);
+             mViewPager_News.setAdapter(mFragmentStatePagerAdapter);
+            // Log.e("DISPLAY","2 current item = "+mCurrentNewsScreen);
+             //mViewPager_News.setCurrentItem(0);
+             //mViewPager_News.setCurrentItem(mCurrentNewsScreen);
              mViewPager_News.addOnPageChangeListener(onPageChangeListener);
          }else {
              changeLayouts(false);
-
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
              fragmentTransaction.replace(R.id.fragment_container_main, mMainFragment);
@@ -197,16 +191,17 @@ public class ActivityMain extends AppCompatActivity
 
     }
     private ArrayList<WNews> getPartNews(ArrayList<WNews> allNews,int currentScreen){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int newsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
-        ArrayList<WNews> partNews = new ArrayList<>(newsPerScreen);
-        for(int i=currentScreen*newsPerScreen;i<currentScreen*newsPerScreen+newsPerScreen;i++){
+        //Log.e("GET PART","currentScreen = "+currentScreen);
+         ArrayList<WNews> partNews = new ArrayList<>(mCountNewsPerScreen);
+        for(int i=currentScreen*mCountNewsPerScreen;i<currentScreen*mCountNewsPerScreen+mCountNewsPerScreen;i++){
+            //Log.e("i",""+i);
             if(i<allNews.size()) {
                 partNews.add(allNews.get(i));
             }
         }
     return partNews;
     }
+
     private void changeLayouts(boolean isViewPager){
         if(isViewPager){
             mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -222,12 +217,14 @@ public class ActivityMain extends AppCompatActivity
             mPagerContainer.invalidate();
         }
     }
-    private FragmentStatePagerAdapter fragmentStatePagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+
+    private FragmentStatePagerAdapter mFragmentStatePagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
         @Override
         public Fragment getItem(int position) {
-            mCurrentNewsScreen = position;
-            ArrayList<WNews> partNews = getPartNews(mAllNews,mCurrentNewsScreen);
-            return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId,mCurrentNewsScreen,mCountNewsScreen);
+            //Log.e("GET ITEM","pos = "+position);
+            //mCurrentNewsScreen = position;
+            ArrayList<WNews> partNews = getPartNews(mAllNews,position);
+            return News_list_fragment_viewPager.newInstance(partNews,mCurrentChannelId,position,mCountNewsScreen);
         }
 
         @Override
@@ -238,13 +235,14 @@ public class ActivityMain extends AppCompatActivity
 
         @Override
         public int getCount() {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            int newsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
             int l = mAllNews.size();
-            if(l<=newsPerScreen){
+            if(l<=mCountNewsPerScreen){
                 mCountNewsScreen=1;
             }else {
-                mCountNewsScreen = ((l - l % newsPerScreen) / newsPerScreen);
+                mCountNewsScreen = ((l - l % mCountNewsPerScreen) / mCountNewsPerScreen);
+                if(l%mCountNewsScreen!=0){
+                    mCountNewsScreen = mCountNewsScreen+1;
+                }
             }
             return mCountNewsScreen;
         }
@@ -258,7 +256,9 @@ public class ActivityMain extends AppCompatActivity
 
         @Override
         public void onPageSelected(int position) {
+
            // setTitle(position);
+
             //Log.e("PAGE SELECTED",""+position);
             /*if(){
                 ArrayList<WNews> partNews = getPartNews(mAllNews,position);
@@ -278,6 +278,7 @@ public class ActivityMain extends AppCompatActivity
 
         }
     };
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onChannelGroupSelected(WChannelGroup group) {
         Intent intent = ChannelGroup_item_activity.newIntent(getApplicationContext(),group);
@@ -303,6 +304,7 @@ public class ActivityMain extends AppCompatActivity
         startActivity(intent);
 
     }
+    //----------------------------------------------------------------------------------------------
     private void setWindowTitle(){
         if(mCurrentChannelId==0){
             setTitle(getResources().getString(R.string.app_name)+" Все новости ");
@@ -311,6 +313,16 @@ public class ActivityMain extends AppCompatActivity
                     DataLab.get(getApplicationContext()).getWChannelsList()).getName());
         }
 
+    }
+    public void setActivityTheme(){
+        Context context = getApplicationContext();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean isLightTheme = preferences.getBoolean("isLightTheme",false);
+        if(isLightTheme){
+            setTheme(R.style.AppThemeLight_NoActionBar);
+        }else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
     }
 
 

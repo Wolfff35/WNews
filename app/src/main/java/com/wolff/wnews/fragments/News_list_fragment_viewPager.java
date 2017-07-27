@@ -4,24 +4,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wolff.wnews.R;
 import com.wolff.wnews.adapters.News_list_adapter;
-import com.wolff.wnews.localdb.DataLab;
-import com.wolff.wnews.model.WChannel;
 import com.wolff.wnews.model.WNews;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -32,7 +26,6 @@ import java.util.ArrayList;
 public class News_list_fragment_viewPager extends Fragment {
     private News_list_fragment_listener listener;
     private ArrayList<WNews> mNewsList = new ArrayList<>();
-    private ArrayList<WChannel> mChannelList = new ArrayList<>();
     public static final String ID_PARTNEWS = "ID_PARTNEWS";
     public static final String ID_CHANNEL = "ID_CHANNEL";
     public static final String ID_SCREEN = "ID_SCREEN";
@@ -40,7 +33,7 @@ public class News_list_fragment_viewPager extends Fragment {
     private ListView mNewsListViewMain;
 
     private TextView tvPageNumber;
-    private long mIdCurrentChannel;
+    private long mCurrentChannelId;
     private int mCurrentNewsScreen;
     private int mCountNewsScreen;
     private Menu mOptionsMenu;
@@ -64,12 +57,11 @@ public class News_list_fragment_viewPager extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         mIdCurrentChannel = getArguments().getLong(ID_CHANNEL);
+         mCurrentChannelId = getArguments().getLong(ID_CHANNEL);
          mNewsList = (ArrayList<WNews>) getArguments().getSerializable(ID_PARTNEWS);
-         mChannelList = DataLab.get(getContext()).getWChannelsList();
          mCurrentNewsScreen=getArguments().getInt(ID_SCREEN);
          mCountNewsScreen=getArguments().getInt(ID_COUNTPAGE);
-          setHasOptionsMenu(true);
+         setHasOptionsMenu(true);
     }
 
     @Override
@@ -82,7 +74,7 @@ public class News_list_fragment_viewPager extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-     mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Nullable
@@ -98,7 +90,7 @@ public class News_list_fragment_viewPager extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mAdapter = new News_list_adapter(getContext(),mNewsList,mChannelList);
+        mAdapter = new News_list_adapter(getContext(),mNewsList);
         tvPageNumber.setText("Page "+(mCurrentNewsScreen+1)+" from "+mCountNewsScreen);
         mNewsListViewMain.setAdapter(mAdapter);
         mNewsListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
