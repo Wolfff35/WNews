@@ -7,11 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,11 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.wolff.wnews.R;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
@@ -40,7 +35,6 @@ public class News_item_fragment extends Fragment {
     private static final String ARG_NEWS_ITEM = "WNewsItem";
     private WNews mNewsItem;
     private Menu mOptionsMenu;
-    private boolean mShowPicassoIndicator;
 
     TextView tvNewsItem_Name;
     TextView tvNewsItem_Channel_PubDate;
@@ -66,8 +60,6 @@ public class News_item_fragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mShowPicassoIndicator = preferences.getBoolean("showPicassoIndicator",false);
         mNewsItem = (WNews) getArguments().getSerializable(ARG_NEWS_ITEM);
         ScreenSize = new Point();
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -92,15 +84,10 @@ public class News_item_fragment extends Fragment {
         tvNewsItem_Describe.setText(mNewsItem.getDescription());
 
         if(!mNewsItem.getEnclosure().isEmpty()) {
-            Picasso picasso = Picasso.with(getContext());
-            if(mShowPicassoIndicator) {
-                picasso.setIndicatorsEnabled(true);
-            }
-            picasso.load(mNewsItem.getEnclosure())
-                    .resize(ScreenSize.x-5,ScreenSize.x-5)
-                    //        .placeholder(R.drawable.ic_download_black)
-                    //        .error(R.drawable.ic_error_black)
+            Glide.with(getContext())
+                    .load(mNewsItem.getEnclosure())
                     .into(ivNewsItem_Picture);
+
         }
         btnOpenNews.setOnClickListener(new View.OnClickListener() {
             @Override

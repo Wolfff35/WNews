@@ -15,11 +15,7 @@
             android:summary="Количество новостей на странице"
             android:title="Новостей на странице">
         </android.support.v7.preference.EditTextPreference>
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:title="Индикатор загрузки картинок"
-            android:key="showPicassoIndicator" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:title="Обновлять даты новостей при изменении"
             android:key="updateNewsPubDate" />

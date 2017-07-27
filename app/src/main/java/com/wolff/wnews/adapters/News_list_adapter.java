@@ -12,7 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.wolff.wnews.R;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
@@ -30,7 +30,6 @@ public class News_list_adapter extends BaseAdapter{
     private LayoutInflater mInflater;
     private ArrayList<WNews> mNewsList;
     //private ArrayList<WChannel> mChannelList;
-    private boolean mShowPicassoIndicator;
     private boolean mIsLightTheme;
     public News_list_adapter(Context context, ArrayList<WNews> newsList){
         mContext=context;
@@ -38,7 +37,6 @@ public class News_list_adapter extends BaseAdapter{
         //mChannelList = channelList;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        mShowPicassoIndicator = preferences.getBoolean("showPicassoIndicator",false);
         mIsLightTheme = preferences.getBoolean("isLightTheme",false);
         //Log.e("showPicassoIndicator","showPicassoIndicator = "+mShowPicassoIndicator);
     }
@@ -92,13 +90,8 @@ public class News_list_adapter extends BaseAdapter{
         }
         tvDatePubNews.setText(dateUtils.dateToString(news.getPubDate(),DateUtils.DATE_FORMAT_VID)+" - "+time_interval+" - "+currChannel);
         if(!news.getEnclosure().isEmpty()) {
-            Picasso picasso = Picasso.with(mContext);
-            if(mShowPicassoIndicator) {
-                picasso.setIndicatorsEnabled(true);
-            }
-            picasso.load(news.getEnclosure())
-            //        .placeholder(R.drawable.ic_download_black)
-            //        .error(R.drawable.ic_error_black)
+             Glide.with(mContext)
+                    .load(news.getEnclosure())
                     .into(ivPictureNews);
         }
         return view;
