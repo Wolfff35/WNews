@@ -1,11 +1,13 @@
 package com.wolff.wnews.fragments;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +39,6 @@ public class News_list_fragment_viewPager extends Fragment {
     private ListView mNewsListViewMain;
 
     private TextView tvPageNumber;
-    private long mCurrentChannelId;
     private int mCurrentNewsScreen;
     private int mCountNewsScreen;
     private Menu mOptionsMenu;
@@ -61,16 +62,15 @@ public class News_list_fragment_viewPager extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         mCurrentChannelId = getArguments().getLong(ID_CHANNEL);
          mNewsList = (ArrayList<WNews>) getArguments().getSerializable(ID_PARTNEWS);
          mCurrentNewsScreen=getArguments().getInt(ID_SCREEN);
          mCountNewsScreen=getArguments().getInt(ID_COUNTPAGE);
          setHasOptionsMenu(true);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean mark_auto = preferences.getBoolean("markAsReadIfSwap",false);
-        if (mark_auto){
-            markNewsAsRead();
-        }
+       // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+       // boolean mark_auto = preferences.getBoolean("markAsReadIfSwap",false);
+        //if (mark_auto){
+        //    markNewsAsRead();
+        //}
 
     }
 
@@ -123,7 +123,7 @@ public class News_list_fragment_viewPager extends Fragment {
                 listener.onNewsSelected_vp(mNewsList,mNewsList.get(position));
             }
         });
-     }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -144,6 +144,6 @@ public class News_list_fragment_viewPager extends Fragment {
                 dataLab.news_update(newsItem);
             }
         }
-
     }
+
 }

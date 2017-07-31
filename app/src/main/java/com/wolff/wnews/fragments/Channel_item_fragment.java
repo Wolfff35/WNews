@@ -106,20 +106,20 @@ public class Channel_item_fragment extends Fragment {
                         tvChannelItem_Title.setText(mChannelItem.getTitle());
                         tvChannelItem_Description.setText(mChannelItem.getDescription());
                         tvChannelItem_PubDate.setText(new DateUtils().dateToString(mChannelItem.getPubDate(), DateUtils.DATE_FORMAT_VID));
-                        Log.e("GET CHANNEL", "OK");
+                        //Log.e("GET CHANNEL", "OK");
                         setOptionsMenuVisibility();
                     }else {
                         mIsLinkChecked=false;
-                        Log.e("GET CHANNEL", "NULL");
+                        //Log.e("GET CHANNEL", "NULL");
                     }
                 } catch (InterruptedException e) {
                     mIsLinkChecked=false;
-                    Log.e("GET CHANNEL","ERROR "+e.getLocalizedMessage());
+                    //Log.e("GET CHANNEL","ERROR "+e.getLocalizedMessage());
                 } catch (ExecutionException e) {
                     mIsLinkChecked=false;
-                    Log.e("GET CHANNEL","ERROR 2 "+e.getLocalizedMessage());
+                    //Log.e("GET CHANNEL","ERROR 2 "+e.getLocalizedMessage());
                 }
-                Log.e("textChangedListener 1","afterTextChanged 1");
+                //Log.e("textChangedListener 1","afterTextChanged 1");
                 btnGetChannel.setEnabled(true);
             }
         });
@@ -246,7 +246,7 @@ public class Channel_item_fragment extends Fragment {
         public void afterTextChanged(Editable s) {
             mIsDataChanged=true;
             setOptionsMenuVisibility();
-            Log.e("textChangedListener 1","afterTextChanged 1");
+            //Log.e("textChangedListener 1","afterTextChanged 1");
         }
     };
     public TextWatcher textChangedListenerLink = new TextWatcher() {
@@ -262,7 +262,7 @@ public class Channel_item_fragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-            Log.e("afretChanged", "s = " + s.toString());
+            //Log.e("afretChanged", "s = " + s.toString());
             mIsDataChanged = true;
             setOptionsMenuVisibility();
         }

@@ -31,11 +31,11 @@
             android:key="onlyUnreadedNews" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
-            android:title="Отмечать как прочитанные при открытии"
+            android:title="Отмечать при открытии"
             android:key="markAsReadIfOpen" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
-            android:title="Отмечать как прочитанные при листании"
+            android:title="Отмечать при листании"
             android:key="markAsReadIfSwap" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"

@@ -43,14 +43,12 @@ public class News_item_activity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable("mCurrentNews",mCurrentNews);
-        //Log.e("onSaveInstanceState","onSaveInstanceState");
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mCurrentNews = (WNews)savedInstanceState.getSerializable("mCurrentNews");
-        //Log.e("onRestoreInstanceState","onRestoreInstanceState");
     }
 
     @Override
@@ -87,29 +85,7 @@ public class News_item_activity extends AppCompatActivity {
             }
         });
 
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                Log.e("onPageSelected","PAGE = "+position);
-                WNews item = mNewsList.get(position);
-                 //if(&&!item.isReaded()){
-                 //    item.setReaded(true);
-                 //    DataLab.get(getApplicationContext()).news_update(item);
-                 //}
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        for (int i=0;i<mNewsList.size();i++){
+         for (int i=0;i<mNewsList.size();i++){
             if(mNewsList.get(i).getId()==mCurrentNews.getId()){
                 mViewPager.setCurrentItem(i);
                 break;

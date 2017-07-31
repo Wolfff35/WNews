@@ -54,11 +54,13 @@ public class ActivityMain extends AppCompatActivity
     private ViewPager mViewPager_News;
 
    //private int mCurrentNewsScreen=0;//текущий экран новостей
+    private boolean mMarkAsREadIfSwap;
     private int mCountNewsScreen;// количество страниц/экранов
     private int mCurrentChannelId=0;
     private int mCountNewsPerScreen;//новостей на странице/экране
     private ArrayList<WNews> mAllNews;
-
+    private Menu mOptionsMenu;
+    private  MenuItem mMenuItem_action_mark_all_as_read;
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +74,7 @@ public class ActivityMain extends AppCompatActivity
         mViewPager_News = (ViewPager) findViewById(R.id.viewPager_news_container);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mCountNewsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
+        mMarkAsREadIfSwap = preferences.getBoolean("markAsReadIfSwap",false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,8 +115,9 @@ public class ActivityMain extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        return true;
+        mOptionsMenu = menu;
+        getMenuInflater().inflate(R.menu.menu_activity_main, mOptionsMenu);
+         return true;
     }
 
     @Override
@@ -160,8 +164,13 @@ public class ActivityMain extends AppCompatActivity
         return true;
     }
      private void displayFragment() {
-            // Log.e("DISPLAY","1 current item = "+mCurrentNewsScreen);
-         // mCurrentNewsScreen=mCurrentNewsScreen+1;
+         //Log.e("DISPLAY","mOldFragment = "+mOldFragment);
+         //Log.e("DISPLAY","mMainFragment = "+mMainFragment);
+         //Log.e("DISPLAY","mViewPager_News = "+mViewPager_News);
+         //Log.e("DISPLAY","===============================================");
+         if(mOptionsMenu!=null) {
+             mMenuItem_action_mark_all_as_read = mOptionsMenu.findItem(R.id.action_mark_all_as_read);
+         }
          if(mOldFragment!=null){
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -176,12 +185,15 @@ public class ActivityMain extends AppCompatActivity
              mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
              mViewPager_News.setAdapter(mFragmentStatePagerAdapter);
              mViewPager_News.addOnPageChangeListener(onPageChangeListener);
+             setOptionsMenuItemVisibility(true);
          }else {
+             //mFragmentStatePagerAdapter=null;
              changeLayouts(false);
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
              fragmentTransaction.replace(R.id.fragment_container_main, mMainFragment);
              fragmentTransaction.commit();
+             setOptionsMenuItemVisibility(false);
          }
 
     }
@@ -201,13 +213,18 @@ public class ActivityMain extends AppCompatActivity
             mMainContainer.setVisibility(View.GONE);
             mPagerContainer.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
             mPagerContainer.setVisibility(View.VISIBLE);
-           }else {
+        }else {
             mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
             mMainContainer.setVisibility(View.VISIBLE);
             mPagerContainer.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             mPagerContainer.setVisibility(View.GONE);
             mMainContainer.invalidate();
             mPagerContainer.invalidate();
+        }
+    }
+    private void setOptionsMenuItemVisibility(boolean isVisible){
+        if(mMenuItem_action_mark_all_as_read!=null){
+            mMenuItem_action_mark_all_as_read.setVisible(isVisible);
         }
     }
 
@@ -240,6 +257,8 @@ public class ActivityMain extends AppCompatActivity
     };
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+
+
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -247,9 +266,7 @@ public class ActivityMain extends AppCompatActivity
 
         @Override
         public void onPageSelected(int position) {
-           // setTitle(position);
-            //Log.e("PAGE SELECTED",""+position);
-            /*if(){
+            if(mMarkAsREadIfSwap){
                 ArrayList<WNews> partNews = getPartNews(mAllNews,position);
                 for(WNews item:partNews){
                     if(!item.isReaded()){
@@ -258,8 +275,8 @@ public class ActivityMain extends AppCompatActivity
                         DataLab.get(getApplicationContext()).news_update(item);
                     }
                 }
-                fragmentStatePagerAdapter.notifyDataSetChanged();
-            }*/
+                mFragmentStatePagerAdapter.notifyDataSetChanged();
+            }
         }
 
         @Override
