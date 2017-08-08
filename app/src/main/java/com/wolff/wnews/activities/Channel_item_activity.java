@@ -17,7 +17,7 @@ import com.wolff.wnews.model.WChannel;
  */
 
 public class Channel_item_activity extends AppCompatActivity {
-    private WChannel mChannelItem;
+    //private WChannel mChannelItem;
     public static final String EXTRA_CHANNEL_ITEM = "ChannelItem";
 
     public static Intent newIntent(Context context, WChannel item){
@@ -37,8 +37,8 @@ public class Channel_item_activity extends AppCompatActivity {
             setTheme(R.style.AppTheme);
         }
         setContentView(R.layout.item_activity);
-        mChannelItem = (WChannel) getIntent().getSerializableExtra(EXTRA_CHANNEL_ITEM);
-        Channel_item_fragment channel_itemFragment = Channel_item_fragment.newIntance(mChannelItem);
+        WChannel channelItem = (WChannel) getIntent().getSerializableExtra(EXTRA_CHANNEL_ITEM);
+        Channel_item_fragment channel_itemFragment = Channel_item_fragment.newIntance(channelItem);
 
         FragmentTransaction fragmentTransaction;
         fragmentTransaction = getSupportFragmentManager().beginTransaction();

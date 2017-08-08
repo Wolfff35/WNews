@@ -100,6 +100,12 @@ public class ChannelGroup_list_fragment extends Fragment {
         inflater.inflate(R.menu.menu_list_actions, mOptionsMenu);
         super.onCreateOptionsMenu(mOptionsMenu,inflater);
     }
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem mi = menu.findItem(R.id.action_import_item);
+        mi.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

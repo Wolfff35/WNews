@@ -332,6 +332,16 @@ private DbCursorWrapper queryWChannels(){
         );
         //Log.e("delete channel group","Success");
     }
+    public WChannelGroup findGroupById(double idGroup, ArrayList<WChannelGroup> groupList){
+
+        for (WChannelGroup item:groupList) {
+            if(item.getId()==idGroup){
+                return item;
+            }
+        }
+        return null;
+    }
+
     //=======================================================================================================
     //Main menu creation
     public ArrayList<WChannel> getMenuItems(){
@@ -357,10 +367,22 @@ private DbCursorWrapper queryWChannels(){
         return channelsList;
     }
 public void deleteOldNews(int daysOld){
-
-    //String delString = "DELETE FROM table_news WHERE strftime('%Y.%m.%d %H:%M:%S',pubDate)<strftime('%Y.%m.%d %H:%M:%S','now','-5 day')";
-    String delString = "DELETE FROM "+DbSchema.Table_News.TABLE_NAME+" WHERE strftime('"
-            +DateUtils.DATE_FORMAT_DELETE+"',"+DbSchema.BaseColumns.PUB_DATE+")<strftime('"+DateUtils.DATE_FORMAT_DELETE+"','now','-"+daysOld+" day')";
+    String delString;
+    if(daysOld>0) {
+        delString = "DELETE FROM " + DbSchema.Table_News.TABLE_NAME + " WHERE strftime('"
+                + DateUtils.DATE_FORMAT_DELETE + "'," + DbSchema.BaseColumns.PUB_DATE + ")<strftime('" + DateUtils.DATE_FORMAT_DELETE + "','now','-" + daysOld + " day')";
+    }else {
+        delString = "DELETE FROM " + DbSchema.Table_News.TABLE_NAME;
+    }
     mDatabase.execSQL(delString);
 }
+    public void deleteChannels(){
+        String delString = "DELETE FROM "+DbSchema.Table_Channel.TABLE_NAME;
+        mDatabase.execSQL(delString);
+    }
+    public void deleteGroups(){
+        String delString = "DELETE FROM "+DbSchema.Table_ChannelGroup.TABLE_NAME;
+        mDatabase.execSQL(delString);
+    }
+
  }

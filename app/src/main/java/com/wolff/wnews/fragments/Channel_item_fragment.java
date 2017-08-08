@@ -1,8 +1,13 @@
 package com.wolff.wnews.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,12 +32,15 @@ import com.wolff.wnews.utils.WriteChannelToLocalDB;
 
 import java.util.concurrent.ExecutionException;
 
+import static com.wolff.wnews.fragments.ChannelGroup_list_dialog.GROUP_ID;
+
 /**
  * Created by wolff on 13.07.2017.
  */
 
 public class Channel_item_fragment extends Fragment {
     private static final String ARG_CHANNEL_ITEM = "WChannelItem";
+    public static final int DIALOG_REQUEST_GROUP = 4;
     private WChannel mChannelItem;
     private boolean mIsNewItem;
     private boolean mIsDataChanged;
@@ -45,6 +53,7 @@ public class Channel_item_fragment extends Fragment {
     TextView tvChannelItem_Description;
     TextView tvChannelItem_PubDate;
     Button btnGetChannel;
+    Button btn_Group;
     TextInputLayout edChannel_Name_layout;
 
     public static Channel_item_fragment newIntance(WChannel item){
@@ -63,7 +72,7 @@ public class Channel_item_fragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+         setHasOptionsMenu(true);
         mChannelItem = (WChannel) getArguments().getSerializable(ARG_CHANNEL_ITEM);
         if(mChannelItem==null){
             mChannelItem = new WChannel();
@@ -85,44 +94,25 @@ public class Channel_item_fragment extends Fragment {
         tvChannelItem_Description = (TextView)view.findViewById(R.id.tvChannelItem_Description);
         tvChannelItem_PubDate = (TextView)view.findViewById(R.id.tvChannelItem_PubDate);
         btnGetChannel = (Button)view.findViewById(R.id.btnGetChannel);
+        btn_Group = (Button)view.findViewById(R.id.btn_Group);
 
         edChannelItem_Name.setText(mChannelItem.getName());
         edChannelItem_Link.setText(mChannelItem.getLink());
         tvChannelItem_Title.setText(mChannelItem.getTitle());
         tvChannelItem_Description.setText(mChannelItem.getDescription());
         tvChannelItem_PubDate.setText(new DateUtils().dateToString(mChannelItem.getPubDate(),DateUtils.DATE_FORMAT_VID));
-
+        if(mChannelItem.getIdGroup()>0){
+            try {
+                btn_Group.setText("" + DataLab.get(getContext()).findGroupById(mChannelItem.getIdGroup(), DataLab.get(getContext()).getWChannelGroupsList()).getName());
+            }catch (Exception e){
+                btn_Group.setText(R.string.btn_group_name_no_group);
+            }
+        }
         edChannelItem_Name.addTextChangedListener(textChangedListener);
         edChannelItem_Link.addTextChangedListener(textChangedListenerLink);
-        btnGetChannel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btnGetChannel.setEnabled(false);
-                mIsNewItem = DataLab.get(getContext()).getWChannelByLink(edChannelItem_Link.getText().toString()) == null;
-                try {
-                    mChannelItem = new GetChannelInfo_Task().execute(edChannelItem_Link.getText().toString()).get();
-                    if(mChannelItem!=null) {
-                        mIsLinkChecked = true;
-                        tvChannelItem_Title.setText(mChannelItem.getTitle());
-                        tvChannelItem_Description.setText(mChannelItem.getDescription());
-                        tvChannelItem_PubDate.setText(new DateUtils().dateToString(mChannelItem.getPubDate(), DateUtils.DATE_FORMAT_VID));
-                        //Log.e("GET CHANNEL", "OK");
-                        setOptionsMenuVisibility();
-                    }else {
-                        mIsLinkChecked=false;
-                        //Log.e("GET CHANNEL", "NULL");
-                    }
-                } catch (InterruptedException e) {
-                    mIsLinkChecked=false;
-                    //Log.e("GET CHANNEL","ERROR "+e.getLocalizedMessage());
-                } catch (ExecutionException e) {
-                    mIsLinkChecked=false;
-                    //Log.e("GET CHANNEL","ERROR 2 "+e.getLocalizedMessage());
-                }
-                //Log.e("textChangedListener 1","afterTextChanged 1");
-                btnGetChannel.setEnabled(true);
-            }
-        });
+        btnGetChannel.setOnClickListener(onClickListener);
+        btn_Group.setOnClickListener(onClickListener_group);
+
         super.onCreateView(inflater,container,savedInstanceState);
         return view;
     }
@@ -188,35 +178,27 @@ public class Channel_item_fragment extends Fragment {
 
     public void updateItemFields() {
         mChannelItem.setName(edChannelItem_Name.getText().toString());
-        //mChannelItem.setTitle(tvChannelItem_Title.getText().toString());
      }
-/*    @Override
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode== Activity.RESULT_OK){
             switch (requestCode){
-                case DIALOG_REQUEST_PICTURE:
-                    int idPict = data.getIntExtra(Picture_list_dialog.TAG_PICTURE_ID,-1);
-                    mAccountItem.setIdPicture(idPict);
-                    imAccountItem_Picture.setImageResource(idPict);
-                    mIsDataChanged=true;
-                    setOptionsMenuVisibility();
-                    break;
-                case DIALOG_REQUEST_CURRENCY:
-                    WCurrency currency = (WCurrency) data.getSerializableExtra(TAG_CURRENCY_ID);
-                    if(currency!=null) {
-                        mAccountItem.setCurrency(currency);
-                        imAccountItem_Currency.setText(currency.getName());
+                case DIALOG_REQUEST_GROUP:
+                     int groupId = data.getIntExtra(GROUP_ID,0);
+                    if(groupId>0) {
+                        mChannelItem.setIdGroup(groupId);
+                        btn_Group.setText(DataLab.get(getContext()).findGroupById(groupId,DataLab.get(getContext()).getWChannelGroupsList()).getName());
                         mIsDataChanged = true;
                         setOptionsMenuVisibility();
                     }else {
-                        Log.e("RESULT"," NO CURRENCY");
+                        Log.e("RESULT"," NO GROUP");
                     }
                     break;
             }
         }
     }
-    */
+
     private void checkFieldsFilling(View v){
         switch (v.getId()){
             case R.id.edGroupItem_Name:
@@ -239,14 +221,14 @@ public class Channel_item_fragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            checkFieldsFilling(edChannelItem_Name);
+           // checkFieldsFilling(edChannelItem_Name);
         }
 
         @Override
         public void afterTextChanged(Editable s) {
+            checkFieldsFilling(edChannelItem_Name);
             mIsDataChanged=true;
             setOptionsMenuVisibility();
-            //Log.e("textChangedListener 1","afterTextChanged 1");
         }
     };
     public TextWatcher textChangedListenerLink = new TextWatcher() {
@@ -257,24 +239,63 @@ public class Channel_item_fragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            checkFieldsFilling(edChannelItem_Name);
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            //Log.e("afretChanged", "s = " + s.toString());
             mIsDataChanged = true;
             setOptionsMenuVisibility();
         }
     };
-/*    View.OnClickListener onClick_Currency_listener = new View.OnClickListener(){
+
+    View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            btnGetChannel.setEnabled(false);
+            mIsDataChanged = true;
+            mIsNewItem = (DataLab.get(getContext()).getWChannelByLink(edChannelItem_Link.getText().toString()) == null);
+            try {
+                mChannelItem = new GetChannelInfo_Task().execute(edChannelItem_Link.getText().toString()).get();
+                if(mChannelItem!=null) {
+                    mIsLinkChecked = true;
+                    tvChannelItem_Title.setText(mChannelItem.getTitle());
+                    if(edChannelItem_Name.getText().toString().isEmpty()){
+                        edChannelItem_Name.setText(mChannelItem.getTitle());
+                    }
+                    tvChannelItem_Description.setText(mChannelItem.getDescription());
+                    tvChannelItem_PubDate.setText(new DateUtils().dateToString(mChannelItem.getPubDate(), DateUtils.DATE_FORMAT_VID));
+                    Log.e("GET CHANNEL", "OK");
+                    setOptionsMenuVisibility();
+                }else {
+                    mIsLinkChecked=false;
+                    tvChannelItem_Description.setText("Ошибка чтения ссылки!!!");
+                    tvChannelItem_Title.setText("");
+                    tvChannelItem_PubDate.setText("");
+                    //Log.e("GET CHANNEL", "NULL");
+                }
+            } catch (InterruptedException e) {
+                mIsLinkChecked=false;
+                tvChannelItem_Description.setText("Ошибка чтения ссылки!!!");
+                tvChannelItem_Title.setText("");
+                tvChannelItem_PubDate.setText("");
+                //Log.e("GET CHANNEL","ERROR "+e.getLocalizedMessage());
+            } catch (ExecutionException e) {
+                mIsLinkChecked=false;
+                tvChannelItem_Description.setText("Ошибка чтения ссылки!!!");
+                tvChannelItem_Title.setText("");
+                tvChannelItem_PubDate.setText("");
+                //Log.e("GET CHANNEL","ERROR 2 "+e.getLocalizedMessage());
+            }
+            btnGetChannel.setEnabled(true);
+        }
+    };
+    View.OnClickListener onClickListener_group = new View.OnClickListener(){
 
         @Override
         public void onClick(View v) {
-            DialogFragment dlgPict = new Currency_list_dialog();
-            dlgPict.setTargetFragment(Account_item_fragment.this,DIALOG_REQUEST_CURRENCY);
-            dlgPict.show(getFragmentManager(),dlgPict.getClass().getName());
-
+            DialogFragment dialog = new ChannelGroup_list_dialog();
+            dialog.setTargetFragment(Channel_item_fragment.this,DIALOG_REQUEST_GROUP);
+            dialog.show(getFragmentManager(),dialog.getClass().getName());
         }
-    };*/
+    };
 }

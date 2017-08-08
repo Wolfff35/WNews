@@ -27,7 +27,7 @@ import java.util.List;
  */
 
 public class News_item_activity extends AppCompatActivity {
-    private ViewPager mViewPager;
+    //private ViewPager mViewPager;
     private List<WNews> mNewsList;
     private WNews mCurrentNews;
     public static final String EXTRA_WNEWSLIST = "W_NewsList";
@@ -62,7 +62,7 @@ public class News_item_activity extends AppCompatActivity {
             setTheme(R.style.AppTheme);
         }
         setContentView(R.layout.news_item_activity);
-        mViewPager = (ViewPager)findViewById(R.id.viewPager_container);
+        ViewPager viewPager = (ViewPager)findViewById(R.id.viewPager_container);
         FragmentManager fragmentManager = getSupportFragmentManager();
         mNewsList = (List<WNews>) getIntent().getSerializableExtra(EXTRA_WNEWSLIST);
 
@@ -72,7 +72,7 @@ public class News_item_activity extends AppCompatActivity {
             mCurrentNews = (WNews) getIntent().getSerializableExtra(EXTRA_WNEWS);
         }
 
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
+        viewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
 
             @Override
             public Fragment getItem(int position) {
@@ -87,7 +87,7 @@ public class News_item_activity extends AppCompatActivity {
 
          for (int i=0;i<mNewsList.size();i++){
             if(mNewsList.get(i).getId()==mCurrentNews.getId()){
-                mViewPager.setCurrentItem(i);
+                viewPager.setCurrentItem(i);
                 break;
             }
         }

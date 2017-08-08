@@ -34,7 +34,7 @@ import com.wolff.wnews.utils.DateUtils;
 public class News_item_fragment extends Fragment {
     private static final String ARG_NEWS_ITEM = "WNewsItem";
     private WNews mNewsItem;
-    private Menu mOptionsMenu;
+    //private Menu mOptionsMenu;
 
     TextView tvNewsItem_Name;
     TextView tvNewsItem_Channel_PubDate;
@@ -104,9 +104,9 @@ public class News_item_fragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        this.mOptionsMenu = menu;
-        inflater.inflate(R.menu.menu_item_news,mOptionsMenu);
-        super.onCreateOptionsMenu(mOptionsMenu, inflater);
+        //this.mOptionsMenu = menu;
+        inflater.inflate(R.menu.menu_item_news,menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

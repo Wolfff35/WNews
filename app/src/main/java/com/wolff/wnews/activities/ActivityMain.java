@@ -33,7 +33,6 @@ import com.wolff.wnews.model.WChannelGroup;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.service.NewsService;
 import com.wolff.wnews.utils.CreateMenu;
-import com.wolff.wnews.utils.TestData;
 import com.wolff.wnews.utils.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
@@ -53,20 +52,15 @@ public class ActivityMain extends AppCompatActivity
     private LinearLayout mPagerContainer;
     private ViewPager mViewPager_News;
 
-   //private int mCurrentNewsScreen=0;//текущий экран новостей
     private boolean mMarkAsREadIfSwap;
     private int mCountNewsScreen;// количество страниц/экранов
     private int mCurrentChannelId=0;
     private int mCountNewsPerScreen;//новостей на странице/экране
     private ArrayList<WNews> mAllNews;
-    private Menu mOptionsMenu;
-    private  MenuItem mMenuItem_action_mark_all_as_read;
-     @Override
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TEST
-        TestData testData = new TestData();
-        testData.fillTestData(getApplicationContext());
         setActivityTheme();
         setContentView(R.layout.activity_main);
         mMainContainer = (LinearLayout) findViewById(R.id.fragment_container_main);
@@ -115,9 +109,19 @@ public class ActivityMain extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mOptionsMenu = menu;
-        getMenuInflater().inflate(R.menu.menu_activity_main, mOptionsMenu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
          return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItem_action_mark_all_as_read = menu.findItem(R.id.action_mark_all_as_read);
+        if(mMainFragment==null&&menuItem_action_mark_all_as_read!=null) {
+            menuItem_action_mark_all_as_read.setVisible(true);
+        }else {
+            menuItem_action_mark_all_as_read.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -147,6 +151,14 @@ public class ActivityMain extends AppCompatActivity
                 displayFragment();
                 break;
             }
+            case R.id.action_delete_all:{
+
+                DataLab dataLab = DataLab.get(getApplicationContext());
+                dataLab.deleteOldNews(0);
+                dataLab.deleteChannels();
+                dataLab.deleteGroups();
+                break;
+            }
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -155,22 +167,17 @@ public class ActivityMain extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
         mCurrentChannelId = item.getItemId();
         mOldFragment=mMainFragment;
         mMainFragment=null;
         displayFragment();
         setWindowTitle();
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
      private void displayFragment() {
-         //Log.e("DISPLAY","mOldFragment = "+mOldFragment);
-         //Log.e("DISPLAY","mMainFragment = "+mMainFragment);
-         //Log.e("DISPLAY","mViewPager_News = "+mViewPager_News);
-         //Log.e("DISPLAY","===============================================");
-         if(mOptionsMenu!=null) {
-             mMenuItem_action_mark_all_as_read = mOptionsMenu.findItem(R.id.action_mark_all_as_read);
-         }
          if(mOldFragment!=null){
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -185,17 +192,14 @@ public class ActivityMain extends AppCompatActivity
              mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
              mViewPager_News.setAdapter(mFragmentStatePagerAdapter);
              mViewPager_News.addOnPageChangeListener(onPageChangeListener);
-             setOptionsMenuItemVisibility(true);
          }else {
-             //mFragmentStatePagerAdapter=null;
              changeLayouts(false);
              FragmentTransaction fragmentTransaction;
              fragmentTransaction = getSupportFragmentManager().beginTransaction();
              fragmentTransaction.replace(R.id.fragment_container_main, mMainFragment);
              fragmentTransaction.commit();
-             setOptionsMenuItemVisibility(false);
          }
-
+         invalidateOptionsMenu();
     }
     private ArrayList<WNews> getPartNews(ArrayList<WNews> allNews,int currentScreen){
          ArrayList<WNews> partNews = new ArrayList<>(mCountNewsPerScreen);
@@ -213,6 +217,7 @@ public class ActivityMain extends AppCompatActivity
             mMainContainer.setVisibility(View.GONE);
             mPagerContainer.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
             mPagerContainer.setVisibility(View.VISIBLE);
+
         }else {
             mMainContainer.setLayoutParams(new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
             mMainContainer.setVisibility(View.VISIBLE);
@@ -220,11 +225,6 @@ public class ActivityMain extends AppCompatActivity
             mPagerContainer.setVisibility(View.GONE);
             mMainContainer.invalidate();
             mPagerContainer.invalidate();
-        }
-    }
-    private void setOptionsMenuItemVisibility(boolean isVisible){
-        if(mMenuItem_action_mark_all_as_read!=null){
-            mMenuItem_action_mark_all_as_read.setVisible(isVisible);
         }
     }
 
@@ -271,7 +271,7 @@ public class ActivityMain extends AppCompatActivity
                 for(WNews item:partNews){
                     if(!item.isReaded()){
                         item.setReaded(true);
-                        Log.e("MARL READED","item # "+item.getId());
+                        //Log.e("MARL READED","item # "+item.getId());
                         DataLab.get(getApplicationContext()).news_update(item);
                     }
                 }
@@ -308,7 +308,6 @@ public class ActivityMain extends AppCompatActivity
             DataLab.get(getApplicationContext()).news_update(news);
         }
         startActivity(intent);
-
     }
     //----------------------------------------------------------------------------------------------
     private void setWindowTitle(){
@@ -318,7 +317,6 @@ public class ActivityMain extends AppCompatActivity
             setTitle(getResources().getString(R.string.app_name)+" "+DataLab.get(getApplicationContext()).findChannelById(mCurrentChannelId,
                     DataLab.get(getApplicationContext()).getWChannelsList()).getName());
         }
-
     }
     public void setActivityTheme(){
         Context context = getApplicationContext();
@@ -330,6 +328,4 @@ public class ActivityMain extends AppCompatActivity
             setTheme(R.style.AppTheme_NoActionBar);
         }
     }
-
-
 }

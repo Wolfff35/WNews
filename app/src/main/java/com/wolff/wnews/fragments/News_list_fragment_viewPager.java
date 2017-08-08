@@ -41,7 +41,7 @@ public class News_list_fragment_viewPager extends Fragment {
     private TextView tvPageNumber;
     private int mCurrentNewsScreen;
     private int mCountNewsScreen;
-    private Menu mOptionsMenu;
+   // private Menu mOptionsMenu;
     private News_list_adapter mAdapter;
 
     public interface News_list_fragment_listener{
@@ -76,9 +76,8 @@ public class News_list_fragment_viewPager extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        this.mOptionsMenu = menu;
-        inflater.inflate(R.menu.menu_list_news, mOptionsMenu);
-        super.onCreateOptionsMenu(mOptionsMenu,inflater);
+        inflater.inflate(R.menu.menu_list_news, menu);
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override

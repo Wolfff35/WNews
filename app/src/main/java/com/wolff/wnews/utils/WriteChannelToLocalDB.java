@@ -57,36 +57,51 @@ public class WriteChannelToLocalDB {
                 Element element = document.getDocumentElement();
                 NodeList nodeList = element.getElementsByTagName("channel");
                 if (nodeList.getLength() > 0) {
-                    //Log.e("readNews", "1-2 length = "+nodeList.getLength());
-                        //Log.e("readNews", "1-3-" + i);
                         Element entry = (Element) nodeList.item(0);
-                        String _imagelink;
-                        String _pubDate = entry.getElementsByTagName(DbSchema.BaseColumns.PUB_DATE).item(0).getFirstChild().getNodeValue();
-                        String _title = entry.getElementsByTagName(DbSchema.BaseColumns.TITLE).item(0).getFirstChild().getNodeValue();
-                        String _description = entry.getElementsByTagName(DbSchema.BaseColumns.DESCRIPTION).item(0).getFirstChild().getNodeValue();
-                        try {
-                            NodeList enclosureList = entry.getElementsByTagName(DbSchema.Table_Channel.Cols.IMAGE);
-                            if (enclosureList.getLength() > 0) {
-                                _imagelink = enclosureList.item(0).getAttributes().item(0).getNodeValue();
-                                //Log.e("ENCLOSURE", "" + _enclosure);
-                            } else {
+                        if(entry!=null) {
+                            String _imagelink;
+                            String _pubDate;
+                            String _title;
+                            String _description;
+
+                            try{
+                                _pubDate = entry.getElementsByTagName(DbSchema.BaseColumns.PUB_DATE).item(0).getFirstChild().getNodeValue();
+                            }catch (Exception e){
+                                _pubDate="";
+                            }
+                            try {
+                                _title = entry.getElementsByTagName(DbSchema.BaseColumns.TITLE).item(0).getFirstChild().getNodeValue();
+                            }catch (Exception e){
+                                _title="";
+                            }
+                            try {
+                                _description = entry.getElementsByTagName(DbSchema.BaseColumns.DESCRIPTION).item(0).getFirstChild().getNodeValue();
+                            }catch (Exception e){
+                                _description="";
+                            }
+                            try {
+                                NodeList enclosureList = entry.getElementsByTagName(DbSchema.Table_Channel.Cols.IMAGE);
+                                if (enclosureList.getLength() > 0) {
+                                    _imagelink = enclosureList.item(0).getAttributes().item(0).getNodeValue();
+                                    //Log.e("ENCLOSURE", "" + _enclosure);
+                                } else {
+                                    _imagelink = "";
+                                }
+                            } catch (Exception e) {
                                 _imagelink = "";
                             }
-                        } catch (Exception e) {
-                            _imagelink = "";
-                            //Log.e("ERROR", "" + e.getLocalizedMessage());
-                        }
-                        //DataLab dataLab = DataLab.get(mContext);
-                        WChannel channel = new WChannel();
-                            //news.setIdChannel(channel.getId());
+                            WChannel channel = new WChannel();
                             channel.setLink(link);
                             channel.setImage(_imagelink);
                             channel.setDescription(_description);
                             channel.setName(_title);
                             channel.setPubDate(new Date(_pubDate));
                             channel.setTitle(_title);
-                        inputStream.close();
-                        return channel;
+                            inputStream.close();
+                            return channel;
+                        }else {
+                            return null;
+                        }
                 }
             } else {
                 Log.e("readNews","ERRORRRRRR "+connection.getResponseCode());

@@ -17,14 +17,14 @@ import java.util.ArrayList;
  */
 
 public class ChannelGroup_list_adapter extends BaseAdapter {
-    private Context mContext;
+    //private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<WChannelGroup> mGroupList;
 
     public ChannelGroup_list_adapter(Context context,ArrayList<WChannelGroup>groupList){
-        mContext=context;
+        //mContext=context;
         mGroupList = groupList;
-        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     @Override
     public int getCount() {

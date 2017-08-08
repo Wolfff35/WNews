@@ -5,6 +5,10 @@
     <attr name="menu_icon_save" format="reference"/>
     <attr name="menu_icon_share" format="reference"/>
     <attr name="menu_icon_mark_as_read" format="reference"/>
+    <attr name="menu_icon_import" format="reference"/>
+
+    <attr name="my_hint_text" format="reference"/>
+    <attr name="my_edit_text" format="reference"/>
 
     <attr name="toolbar_theme" format="reference"/>
 
@@ -24,6 +28,7 @@
           <item name="menu_icon_save">@drawable/ic_save_white</item>
           <item name="menu_icon_share">@drawable/ic_share_white</item>
           <item name="menu_icon_mark_as_read">@drawable/ic_mark_all_white</item>
+          <item name="menu_icon_import">@drawable/ic_import_white</item>
 
           <item name="toolbar_theme">@style/Base_ToolbarStyle_Dark</item>
 
@@ -43,6 +48,7 @@
         <item name="menu_icon_save">@drawable/ic_save_black</item>
         <item name="menu_icon_share">@drawable/ic_share_black</item>
         <item name="menu_icon_mark_as_read">@drawable/ic_mark_all_black</item>
+        <item name="menu_icon_import">@drawable/ic_import_black</item>
 
         <item name="toolbar_theme">@style/Base_ToolbarStyle_Light</item>
 
@@ -62,11 +68,18 @@
     <!--<style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat" />-->
 
     <!--Floating label text style-->
+    <style name="MyHintTextLight" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/colorPrimaryDark_Light</item>
+    </style>
     <style name="MyHintText" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
     <!--Input field style-->
+    <style name="MyEditTextLight" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorPrimary_Light</item>
+        <item name="colorControlActivated">@color/colorAccent_Light</item>
+    </style>
     <style name="MyEditText" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorAccent</item>

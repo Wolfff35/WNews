@@ -2,9 +2,11 @@ package com.wolff.wnews.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.wolff.wnews.R;
 import com.wolff.wnews.activities.ChannelGroup_item_activity;
@@ -20,8 +23,13 @@ import com.wolff.wnews.activities.Channel_item_activity;
 import com.wolff.wnews.adapters.Channel_list_adapter;
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.model.WChannel;
+import com.wolff.wnews.utils.ImportChannels;
+import com.wolff.wnews.utils.OtherUtils;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by wolff on 13.07.2017.
@@ -30,10 +38,11 @@ import java.util.ArrayList;
 public class Channel_list_fragment extends Fragment {
     private Channel_list_fragment_listener listener1;
     private ArrayList<WChannel> mChannelList = new ArrayList<>();
-    //public static final String ID_CHANNEL = "ID_CHANNEL";
     private ListView mChannelListViewMain;
     private Menu mOptionsMenu;
-    private Channel_list_adapter mAdapter;
+    //private Channel_list_adapter mAdapter;
+    private static final int FILE_SELECT_CODE = 0;
+
     public interface Channel_list_fragment_listener{
         void onChannelSelected(WChannel channel);
     }
@@ -51,9 +60,8 @@ public class Channel_list_fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mAdapter.notifyDataSetChanged();
-        //mChannelList = DataLab.get(getContext()).getWChannelsList();
-        //onActivityCreated(null);
+        mChannelList = DataLab.get(getContext()).getWChannelsList();
+        onActivityCreated(null);
     }
 
 
@@ -71,9 +79,9 @@ public class Channel_list_fragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mChannelList = DataLab.get(getContext()).getWChannelsList();
-        mAdapter = new Channel_list_adapter(getContext(),mChannelList);
+        Channel_list_adapter adapter = new Channel_list_adapter(getContext(),mChannelList);
 
-        mChannelListViewMain.setAdapter(mAdapter);
+        mChannelListViewMain.setAdapter(adapter);
         mChannelListViewMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -111,9 +119,55 @@ public class Channel_list_fragment extends Fragment {
                 startActivity(intent);
                 break;
             }
+            case R.id.action_import_item:{
+                showFileChooser();
+                break;
+            }
             default:
         }
         return super.onOptionsItemSelected(item);
     }
+//=================================
+private void showFileChooser() {
+    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+    intent.setType("*/*");
+    intent.addCategory(Intent.CATEGORY_OPENABLE);
 
+    try {
+        startActivityForResult(
+                Intent.createChooser(intent, "Select a File to Upload"),
+                FILE_SELECT_CODE);
+    } catch (android.content.ActivityNotFoundException ex) {
+        Log.e("NOT","FOUND");
+        // Potentially direct the user to the Market with a Dialog
+        //Toast.makeText(this, "Please install a File Manager.",
+        //        Toast.LENGTH_SHORT).show();
+    }
+}
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case FILE_SELECT_CODE:
+                if (resultCode == RESULT_OK) {
+                    // Get the Uri of the selected file
+                    Uri uri = data.getData();
+                    Log.d("SELECT", "File Uri: " + uri.toString());
+                    // Get the path
+                    String path;
+                    try {
+                        path = OtherUtils.getPath(getContext(), uri);
+                        new ImportChannels().getChannelsFromOPML(getContext(),path);
+                    } catch (URISyntaxException e) {
+                        Log.e("ERROR",""+e.getLocalizedMessage());
+                        path="";
+                    }
+                    Log.d("SELECT", "File Path: " + path);
+                    // Get the file instance
+                    // File file = new File(path);
+                    // Initiate the upload
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

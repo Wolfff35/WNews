@@ -18,14 +18,12 @@ import java.util.ArrayList;
  */
 
 public class Channel_list_adapter extends BaseAdapter {
-    private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<WChannel> mChannelList;
 
     public Channel_list_adapter(Context context, ArrayList<WChannel>channelList){
-        mContext=context;
         mChannelList = channelList;
-        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
     @Override
     public int getCount() {

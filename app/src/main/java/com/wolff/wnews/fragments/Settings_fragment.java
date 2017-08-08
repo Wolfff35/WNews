@@ -20,6 +20,10 @@ public class Settings_fragment extends PreferenceFragmentCompat {
         return new Settings_fragment();
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActivity().setTitle(getString(R.string.fragment_title_settings));
 
-
+    }
 }

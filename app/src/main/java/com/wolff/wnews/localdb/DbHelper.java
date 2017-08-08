@@ -10,7 +10,7 @@ import android.util.Log;
  */
 
     public class DbHelper extends SQLiteOpenHelper {
-    public static final int VERSION = 1;
+    public static final int VERSION = 4;
 
     public DbHelper(Context context) {
         super(context, DbSchema.DATABASE_NAME, null, VERSION);
@@ -26,6 +26,10 @@ import android.util.Log;
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+           // db.execSQL(DbSchema.CREATE_CHANNELGROUP_TABLE);
+           // db.execSQL(DbSchema.CREATE_CHANNEL_TABLE);
+           // db.execSQL(DbSchema.CREATE_NEWS_TABLE);
+            Log.e("CREATE TABLES","UPDATED!");
 
         }
 }

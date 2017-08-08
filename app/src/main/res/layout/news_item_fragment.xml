@@ -37,7 +37,8 @@
         android:id="@+id/ivNewsItem_Picture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"/>
+        android:layout_margin="10dp"
+        android:contentDescription="@string/image_context_description"/>
 
     <Button
         android:id="@+id/btnOpenNews"

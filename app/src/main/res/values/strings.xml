@@ -4,11 +4,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="menu_nav_switch_theme">Сменить тему</string>
     <string name="menu_nav_settings">Настройки</string>
     <string name="menu_nav_edit_groups">Редактировать группы</string>
     <string name="menu_nav_exit">Выход</string>
-    <string name="menu_nav_group_news">Новости</string>
     <string name="menu_nav_edit_channels">Редактировать каналы</string>
 
     <string name="menu_nav_header_channels">Новостные каналы</string>
@@ -19,4 +17,9 @@
     <string name="menu_action_delete">Удалить</string>
     <string name="fragment_title_groupchannel">Группы новостных каналов</string>
     <string name="menu_action_list_mark_all_as_read">Отметить как прочитанные</string>
+    <string name="fragment_title_settings">Настройки</string>
+    <string name="menu_action_list_import">Импорт (opml)</string>
+    <string name="menu_nav_delete_all">Удалить все</string>
+    <string name="image_context_description">Картинка</string>
+    <string name="btn_group_name_no_group">НЕТ ГРУППЫ</string>
 </resources>
