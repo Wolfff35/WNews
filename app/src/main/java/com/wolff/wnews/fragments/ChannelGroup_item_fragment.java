@@ -30,8 +30,8 @@ public class ChannelGroup_item_fragment extends Fragment {
     private boolean mIsDataChanged;
     private Menu mOptionsMenu;
 
-    EditText edGroupItem_Name;
-    TextInputLayout edGroup_Name_layout;
+    private EditText edGroupItem_Name;
+    private TextInputLayout edGroup_Name_layout;
 
     public static ChannelGroup_item_fragment newIntance(WChannelGroup item){
         Bundle args = new Bundle();
@@ -69,7 +69,7 @@ public class ChannelGroup_item_fragment extends Fragment {
         return view;
     }
 
-    public void setOptionsMenuVisibility(){
+    private  void setOptionsMenuVisibility(){
         if(mOptionsMenu!=null){
             MenuItem it_save = mOptionsMenu.findItem(R.id.action_item_save);
             MenuItem it_del = mOptionsMenu.findItem(R.id.action_item_delete);
@@ -102,7 +102,7 @@ public class ChannelGroup_item_fragment extends Fragment {
     }
 
 
-    public void saveItem() {
+    private  void saveItem() {
         updateItemFields();
         if (!isFillingOk()){
        //     edGroup_Name_layout.setErrorEnabled(false);
@@ -116,7 +116,7 @@ public class ChannelGroup_item_fragment extends Fragment {
         getActivity().finish();
     }
 
-    public boolean isFillingOk() {
+    private  boolean isFillingOk() {
         boolean isOk=true;
         if(mGroupItem.getName().length()<2) {
             isOk = false;
@@ -124,16 +124,16 @@ public class ChannelGroup_item_fragment extends Fragment {
         return isOk;
     }
 
-    public void deleteItem() {
+    private  void deleteItem() {
         DataLab.get(getContext()).channelGroup_delete(mGroupItem);
         getActivity().finish();
     }
 
-    public void updateItemFields() {
+    private  void updateItemFields() {
         mGroupItem.setName(edGroupItem_Name.getText().toString());
      }
 
-     public TextWatcher textChangedListener = new TextWatcher() {
+    private  TextWatcher textChangedListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -158,13 +158,4 @@ public class ChannelGroup_item_fragment extends Fragment {
             setOptionsMenuVisibility();
         }
     };
- /*   View.OnFocusChangeListener onFocusChanged_listener = new View.OnFocusChangeListener(){
-
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            Log.e("FOCUS","view = "+v.getId());
-            checkFieldsFilling(v);
-         }
-    };
-*/
 }

@@ -32,10 +32,10 @@ import java.util.ArrayList;
 public class News_list_fragment_viewPager extends Fragment {
     private News_list_fragment_listener listener;
     private ArrayList<WNews> mNewsList = new ArrayList<>();
-    public static final String ID_PARTNEWS = "ID_PARTNEWS";
-    public static final String ID_CHANNEL = "ID_CHANNEL";
-    public static final String ID_SCREEN = "ID_SCREEN";
-    public static final String ID_COUNTPAGE = "ID_COUNTPAGE";
+    private  static final String ID_PARTNEWS = "ID_PARTNEWS";
+    private  static final String ID_CHANNEL = "ID_CHANNEL";
+    private  static final String ID_SCREEN = "ID_SCREEN";
+    private  static final String ID_COUNTPAGE = "ID_COUNTPAGE";
     private ListView mNewsListViewMain;
 
     private TextView tvPageNumber;

@@ -54,17 +54,17 @@ public class OtherUtils {
             String[] projection = {
                     MediaStore.Images.Media.DATA
             };
-            Cursor cursor = null;
+            //Cursor cursor = null;
             try {
-                cursor = context.getContentResolver()
+               Cursor cursor = context.getContentResolver()
                         .query(uri, projection, selection, selectionArgs, null);
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 if (cursor.moveToFirst()) {
                     return cursor.getString(column_index);
                 }
             } catch (Exception e) {
-            }finally {
-                cursor.close();
+            //}finally {
+                //cursor.close();
             }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
@@ -92,15 +92,15 @@ public class OtherUtils {
         return null;
     */
     }
-    public static boolean isExternalStorageDocument(Uri uri) {
+    private  static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
-    public static boolean isDownloadsDocument(Uri uri) {
+    private  static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
-    public static boolean isMediaDocument(Uri uri) {
+    private  static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 }

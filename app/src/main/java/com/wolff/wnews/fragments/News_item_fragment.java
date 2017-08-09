@@ -36,12 +36,12 @@ public class News_item_fragment extends Fragment {
     private WNews mNewsItem;
     //private Menu mOptionsMenu;
 
-    TextView tvNewsItem_Name;
-    TextView tvNewsItem_Channel_PubDate;
-    TextView tvNewsItem_Describe;
-    ImageView ivNewsItem_Picture;
-    Point ScreenSize;
-    Button btnOpenNews;
+    private TextView tvNewsItem_Name;
+    private TextView tvNewsItem_Channel_PubDate;
+    private TextView tvNewsItem_Describe;
+    private ImageView ivNewsItem_Picture;
+    private Point ScreenSize;
+    private Button btnOpenNews;
 
     public static News_item_fragment newIntance(WNews item){
         Bundle args = new Bundle();

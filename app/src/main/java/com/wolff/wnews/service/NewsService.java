@@ -84,10 +84,10 @@ public class NewsService extends Service {
              }
     },0, Integer.valueOf(preferences.getString("updatePeriod_minutes","5")), TimeUnit.MINUTES);
     }
-    public boolean isOnline() {
+    private  boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+        return (netInfo != null && netInfo.isConnectedOrConnecting());
     }
 }

@@ -18,7 +18,7 @@ import com.wolff.wnews.model.WChannel;
 
 public class Channel_item_activity extends AppCompatActivity {
     //private WChannel mChannelItem;
-    public static final String EXTRA_CHANNEL_ITEM = "ChannelItem";
+    private static final String EXTRA_CHANNEL_ITEM = "ChannelItem";
 
     public static Intent newIntent(Context context, WChannel item){
         Intent intent = new Intent(context,Channel_item_activity.class);

@@ -47,8 +47,7 @@ public class Channel_list_fragment extends Fragment {
         void onChannelSelected(WChannel channel);
     }
     public static Channel_list_fragment newInstance(){
-        Channel_list_fragment fragment = new Channel_list_fragment();
-        return fragment;
+        return new Channel_list_fragment();
     }
 
     @Override

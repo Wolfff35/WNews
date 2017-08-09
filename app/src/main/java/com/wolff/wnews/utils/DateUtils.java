@@ -13,7 +13,7 @@ import java.util.Locale;
  */
 
 public class DateUtils {
-    public static final String DATE_FORMAT_STR = "yyyy-MM-dd'T'HH:mm:ss";
+    private  static final String DATE_FORMAT_STR = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String DATE_FORMAT_VID = "dd-MM-yyyy";
     public static final String DATE_FORMAT_VID_FULL = "dd-MM-yyyy HH:mm:ss";
     //public static final String DATE_FORMAT_SAVE = "yyyy-MM-dd-HH-mm-ss";
@@ -25,13 +25,12 @@ public class DateUtils {
         if(strDate==null){
             return null;
         }
-        if(strDate.equalsIgnoreCase("")|strDate.isEmpty()|strDate==null){
+        if(strDate.equalsIgnoreCase("")|strDate.isEmpty()){
             return null;
         }
         DateFormat format = new SimpleDateFormat(strFormat, Locale.ENGLISH);
         try {
-            Date date = format.parse(strDate);
-            return date;
+            return format.parse(strDate);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
@@ -46,8 +45,7 @@ public class DateUtils {
         }
 
         DateFormat format = new SimpleDateFormat(strFormat, Locale.ENGLISH);
-        String strDate = format.format(locDate);
-        return strDate;
+        return format.format(locDate);
     }
     public String addZero(int num){
         if(String.valueOf(num).length()==1){
@@ -59,7 +57,6 @@ public class DateUtils {
         String time_interval;
         Date now = new Date();
         if(pubDate==null){
-            Log.e("CALCULATE",""+pubDate);
             return "NULL";
         }
         long sec = (now.getTime()-pubDate.getTime())/1000;

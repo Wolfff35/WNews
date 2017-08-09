@@ -13,7 +13,7 @@ import com.wolff.wnews.utils.DateUtils;
  * Created by wolff on 23.05.2017.
  */
 
-public class DbCursorWrapper extends CursorWrapper {
+class DbCursorWrapper extends CursorWrapper {
 
       public DbCursorWrapper(Cursor cursor) {
         super(cursor);

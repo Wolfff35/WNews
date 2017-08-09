@@ -40,21 +40,21 @@ import static com.wolff.wnews.fragments.ChannelGroup_list_dialog.GROUP_ID;
 
 public class Channel_item_fragment extends Fragment {
     private static final String ARG_CHANNEL_ITEM = "WChannelItem";
-    public static final int DIALOG_REQUEST_GROUP = 4;
+    private static final int DIALOG_REQUEST_GROUP = 4;
     private WChannel mChannelItem;
     private boolean mIsNewItem;
     private boolean mIsDataChanged;
     private boolean mIsLinkChecked;
     private Menu mOptionsMenu;
 
-    EditText edChannelItem_Name;
-    EditText edChannelItem_Link;
-    TextView tvChannelItem_Title;
-    TextView tvChannelItem_Description;
-    TextView tvChannelItem_PubDate;
-    Button btnGetChannel;
-    Button btn_Group;
-    TextInputLayout edChannel_Name_layout;
+    private EditText edChannelItem_Name;
+    private EditText edChannelItem_Link;
+    private TextView tvChannelItem_Title;
+    private TextView tvChannelItem_Description;
+    private TextView tvChannelItem_PubDate;
+    private Button btnGetChannel;
+    private Button btn_Group;
+    private TextInputLayout edChannel_Name_layout;
 
     public static Channel_item_fragment newIntance(WChannel item){
         Bundle args = new Bundle();
@@ -117,7 +117,7 @@ public class Channel_item_fragment extends Fragment {
         return view;
     }
 
-    public void setOptionsMenuVisibility(){
+    private  void setOptionsMenuVisibility(){
         if(mOptionsMenu!=null){
             MenuItem it_save = mOptionsMenu.findItem(R.id.action_item_save);
             MenuItem it_del = mOptionsMenu.findItem(R.id.action_item_delete);
@@ -150,7 +150,7 @@ public class Channel_item_fragment extends Fragment {
     }
 
 
-    public void saveItem() {
+    private  void saveItem() {
         updateItemFields();
         if (!isFillingOk()){
             return;
@@ -163,7 +163,7 @@ public class Channel_item_fragment extends Fragment {
         getActivity().finish();
     }
 
-    public boolean isFillingOk() {
+    private  boolean isFillingOk() {
         boolean isOk=true;
         if(mChannelItem.getName().length()<2) {
             isOk = false;
@@ -171,12 +171,12 @@ public class Channel_item_fragment extends Fragment {
         return isOk;
     }
 
-    public void deleteItem() {
+    private  void deleteItem() {
         DataLab.get(getContext()).channel_delete(mChannelItem);
         getActivity().finish();
     }
 
-    public void updateItemFields() {
+    private  void updateItemFields() {
         mChannelItem.setName(edChannelItem_Name.getText().toString());
      }
     @Override
@@ -213,7 +213,7 @@ public class Channel_item_fragment extends Fragment {
         }
         setOptionsMenuVisibility();
     }
-    public TextWatcher textChangedListener = new TextWatcher() {
+    private  TextWatcher textChangedListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -231,7 +231,7 @@ public class Channel_item_fragment extends Fragment {
             setOptionsMenuVisibility();
         }
     };
-    public TextWatcher textChangedListenerLink = new TextWatcher() {
+    private  TextWatcher textChangedListenerLink = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -248,7 +248,7 @@ public class Channel_item_fragment extends Fragment {
         }
     };
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             btnGetChannel.setEnabled(false);
@@ -273,23 +273,17 @@ public class Channel_item_fragment extends Fragment {
                     tvChannelItem_PubDate.setText("");
                     //Log.e("GET CHANNEL", "NULL");
                 }
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 mIsLinkChecked=false;
                 tvChannelItem_Description.setText("Ошибка чтения ссылки!!!");
                 tvChannelItem_Title.setText("");
                 tvChannelItem_PubDate.setText("");
                 //Log.e("GET CHANNEL","ERROR "+e.getLocalizedMessage());
-            } catch (ExecutionException e) {
-                mIsLinkChecked=false;
-                tvChannelItem_Description.setText("Ошибка чтения ссылки!!!");
-                tvChannelItem_Title.setText("");
-                tvChannelItem_PubDate.setText("");
-                //Log.e("GET CHANNEL","ERROR 2 "+e.getLocalizedMessage());
             }
             btnGetChannel.setEnabled(true);
         }
     };
-    View.OnClickListener onClickListener_group = new View.OnClickListener(){
+    private View.OnClickListener onClickListener_group = new View.OnClickListener(){
 
         @Override
         public void onClick(View v) {

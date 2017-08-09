@@ -116,10 +116,12 @@ public class ActivityMain extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem menuItem_action_mark_all_as_read = menu.findItem(R.id.action_mark_all_as_read);
-        if(mMainFragment==null&&menuItem_action_mark_all_as_read!=null) {
-            menuItem_action_mark_all_as_read.setVisible(true);
-        }else {
-            menuItem_action_mark_all_as_read.setVisible(false);
+        if(menuItem_action_mark_all_as_read!=null) {
+            if (mMainFragment == null) {
+                menuItem_action_mark_all_as_read.setVisible(true);
+            } else {
+                menuItem_action_mark_all_as_read.setVisible(false);
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -271,7 +273,6 @@ public class ActivityMain extends AppCompatActivity
                 for(WNews item:partNews){
                     if(!item.isReaded()){
                         item.setReaded(true);
-                        //Log.e("MARL READED","item # "+item.getId());
                         DataLab.get(getApplicationContext()).news_update(item);
                     }
                 }
@@ -318,7 +319,7 @@ public class ActivityMain extends AppCompatActivity
                     DataLab.get(getApplicationContext()).getWChannelsList()).getName());
         }
     }
-    public void setActivityTheme(){
+    private void setActivityTheme(){
         Context context = getApplicationContext();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean isLightTheme = preferences.getBoolean("isLightTheme",false);

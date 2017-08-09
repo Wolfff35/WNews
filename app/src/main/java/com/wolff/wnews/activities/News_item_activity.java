@@ -30,8 +30,8 @@ public class News_item_activity extends AppCompatActivity {
     //private ViewPager mViewPager;
     private List<WNews> mNewsList;
     private WNews mCurrentNews;
-    public static final String EXTRA_WNEWSLIST = "W_NewsList";
-    public static final String EXTRA_WNEWS = "W_News";
+    private  static final String EXTRA_WNEWSLIST = "W_NewsList";
+    private  static final String EXTRA_WNEWS = "W_News";
 
     public static Intent newIntent(Context context, ArrayList<WNews> wNewsList,WNews currentNews){
         Intent intent = new Intent(context,News_item_activity.class);
