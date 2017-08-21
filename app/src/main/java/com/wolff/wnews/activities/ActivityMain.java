@@ -53,6 +53,7 @@ public class ActivityMain extends AppCompatActivity
     private ViewPager mViewPager_News;
 
     private boolean mMarkAsREadIfSwap;
+    private int mPreviousPageNumber;
     private int mCountNewsScreen;// количество страниц/экранов
     private int mCurrentChannelId=0;
     private int mCountNewsPerScreen;//новостей на странице/экране
@@ -69,6 +70,7 @@ public class ActivityMain extends AppCompatActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mCountNewsPerScreen = Integer.valueOf(preferences.getString("countNewsPerScreen","5"));
         mMarkAsREadIfSwap = preferences.getBoolean("markAsReadIfSwap",false);
+        mPreviousPageNumber=0;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -268,8 +270,10 @@ public class ActivityMain extends AppCompatActivity
 
         @Override
         public void onPageSelected(int position) {
-            if(mMarkAsREadIfSwap){
-                ArrayList<WNews> partNews = getPartNews(mAllNews,position);
+             if(mMarkAsREadIfSwap){
+                 mPreviousPageNumber=position-1;
+                 if(mPreviousPageNumber<0) mPreviousPageNumber=0;
+                 ArrayList<WNews> partNews = getPartNews(mAllNews,mPreviousPageNumber);
                 for(WNews item:partNews){
                     if(!item.isReaded()){
                         item.setReaded(true);

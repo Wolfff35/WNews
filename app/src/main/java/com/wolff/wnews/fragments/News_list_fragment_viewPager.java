@@ -66,12 +66,6 @@ public class News_list_fragment_viewPager extends Fragment {
          mCurrentNewsScreen=getArguments().getInt(ID_SCREEN);
          mCountNewsScreen=getArguments().getInt(ID_COUNTPAGE);
          setHasOptionsMenu(true);
-       // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-       // boolean mark_auto = preferences.getBoolean("markAsReadIfSwap",false);
-        //if (mark_auto){
-        //    markNewsAsRead();
-        //}
-
     }
 
     @Override
