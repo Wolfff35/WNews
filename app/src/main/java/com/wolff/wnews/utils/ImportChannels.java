@@ -3,6 +3,7 @@ package com.wolff.wnews.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.wolff.wnews.localdb.DataLab;
 import com.wolff.wnews.localdb.DbSchema;
@@ -78,11 +79,16 @@ public class ImportChannels {
         }
         } catch (ParserConfigurationException e) {
             Log.e("ERROR 1",""+e.getLocalizedMessage());
+            Toast toast = Toast.makeText(context,"Неверный формат файла",Toast.LENGTH_LONG);
+            toast.show();
+
             //e.printStackTrace();
         } catch (SAXException e) {
             Log.e("ERROR 2",""+e.getLocalizedMessage());
             //e.printStackTrace();
         } catch (IOException e) {
+            Toast toast = Toast.makeText(context,"Ошибка доступа к файлу",Toast.LENGTH_LONG);
+            toast.show();
             Log.e("ERROR 3",""+e.getLocalizedMessage());
             //e.printStackTrace();
         }

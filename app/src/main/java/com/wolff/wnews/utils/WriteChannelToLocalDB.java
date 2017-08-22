@@ -104,20 +104,20 @@ public class WriteChannelToLocalDB {
                         }
                 }
             } else {
-                Log.e("readNews","ERRORRRRRR "+connection.getResponseCode());
+                Log.e("readChannel","ERRORRRRRR "+connection.getResponseCode());
                 return null;
             }
         } catch (MalformedURLException e) {
-            Log.e("readNews", "2");
+            Log.e("readChannel", "2");
             return null;
         } catch (IOException e) {
-            Log.e("readNews", "3 "+e.getLocalizedMessage());
+            Log.e("readChannel", "3 "+e.getLocalizedMessage());
             return null;
         } catch (ParserConfigurationException e) {
-            Log.e("readNews", "4");
+            Log.e("readChannel", "4");
             return null;
         } catch (SAXException e) {
-            Log.e("readNews", "5");
+            Log.e("readChannel", "5");
             return null;
         }finally {
 

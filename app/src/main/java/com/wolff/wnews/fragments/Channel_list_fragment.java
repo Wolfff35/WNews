@@ -157,7 +157,9 @@ private void showFileChooser() {
                         path = OtherUtils.getPath(getContext(), uri);
                         new ImportChannels().getChannelsFromOPML(getContext(),path);
                     } catch (URISyntaxException e) {
-                        Log.e("ERROR",""+e.getLocalizedMessage());
+                        Log.e("ERROR---",""+e.getLocalizedMessage());
+                        Toast toast = Toast.makeText(getContext(),"ОШИБКА выбора",Toast.LENGTH_LONG);
+                        toast.show();
                         path="";
                     }
                     Log.d("SELECT", "File Path: " + path);

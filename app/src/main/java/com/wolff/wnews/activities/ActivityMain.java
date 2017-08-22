@@ -272,14 +272,16 @@ public class ActivityMain extends AppCompatActivity
         public void onPageSelected(int position) {
              if(mMarkAsREadIfSwap){
                  mPreviousPageNumber=position-1;
-                 if(mPreviousPageNumber<0) mPreviousPageNumber=0;
-                 ArrayList<WNews> partNews = getPartNews(mAllNews,mPreviousPageNumber);
-                for(WNews item:partNews){
-                    if(!item.isReaded()){
-                        item.setReaded(true);
-                        DataLab.get(getApplicationContext()).news_update(item);
-                    }
-                }
+                 //if(mPreviousPageNumber<0) mPreviousPageNumber=0;
+                 if(mPreviousPageNumber>=0) {
+                     ArrayList<WNews> partNews = getPartNews(mAllNews, mPreviousPageNumber);
+                     for (WNews item : partNews) {
+                         if (!item.isReaded()) {
+                             item.setReaded(true);
+                             DataLab.get(getApplicationContext()).news_update(item);
+                         }
+                     }
+                 }
                 mFragmentStatePagerAdapter.notifyDataSetChanged();
             }
         }
