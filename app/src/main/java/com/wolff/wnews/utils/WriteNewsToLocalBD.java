@@ -43,8 +43,9 @@ public void readNewsFromChannelAndWriteToLocalBD(WChannel channel) {
    // Log.e("readNews", "begin");
     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     boolean updateNewsPubDate = preferences.getBoolean("updateNewsPubDate",false);
+  //  Log.e("readNews", "1 " + channel.getLink());
     try {
-        //Log.e("readNews", "1 " + channel.getLink());
+  //      Log.e("readNews", "1.1 " + channel.getLink());
         URL url = new URL(channel.getLink());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestProperty("User-Agent", "Test");
@@ -147,16 +148,18 @@ public void readNewsFromChannelAndWriteToLocalBD(WChannel channel) {
             inputStream.close();
             //Log.e("readNews","FINISH");
         } else {
-            Log.e("readNews","ERRORRRRRR "+connection.getResponseCode());
+ //           Log.e("readNews","ERRORRRRRR "+connection.getResponseCode());
+ //           Log.e("readNews","ERRORRRRRR "+connection.getResponseCode());
+ //           Log.e("readNews","ERRORRRRRR "+channel.getLink());
         }
     } catch (MalformedURLException e) {
-        Log.e("readNews", "2");
+ //       Log.e("readNews", "2");
     } catch (IOException e) {
        // Log.e("readNews", "3 "+e.getLocalizedMessage());
     } catch (ParserConfigurationException e) {
-        Log.e("readNews", "4");
+ //       Log.e("readNews", "4");
     } catch (SAXException e) {
-        Log.e("readNews", "5");
+  //      Log.e("readNews", "5");
     }finally {
         //Log.e("readNews","6=============================================================================");
     }

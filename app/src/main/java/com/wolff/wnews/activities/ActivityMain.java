@@ -8,14 +8,13 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +32,6 @@ import com.wolff.wnews.model.WChannelGroup;
 import com.wolff.wnews.model.WNews;
 import com.wolff.wnews.service.NewsService;
 import com.wolff.wnews.utils.CreateMenu;
-import com.wolff.wnews.utils.ZoomOutPageTransformer;
 
 import java.util.ArrayList;
 
@@ -193,7 +191,8 @@ public class ActivityMain extends AppCompatActivity
              changeLayouts(true);
              DataLab dataLab = DataLab.get(getApplicationContext());
              mAllNews = dataLab.getWNewsList(mCurrentChannelId);
-             mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
+             //mViewPager_News.setPageTransformer(true, new ZoomOutPageTransformer());
+             //mViewPager_News.setPageTransformer(true, new VerticalPageTransformer());
              mViewPager_News.setAdapter(mFragmentStatePagerAdapter);
              mViewPager_News.addOnPageChangeListener(onPageChangeListener);
          }else {
