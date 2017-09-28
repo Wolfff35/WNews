@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.wolff.wnews.R;
-import com.wolff.wnews.activities.ChannelGroup_item_activity;
 import com.wolff.wnews.activities.Channel_item_activity;
 import com.wolff.wnews.adapters.Channel_list_adapter;
 import com.wolff.wnews.localdb.DataLab;

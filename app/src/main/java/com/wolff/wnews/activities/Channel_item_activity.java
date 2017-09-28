@@ -17,24 +17,24 @@ import com.wolff.wnews.model.WChannel;
  */
 
 public class Channel_item_activity extends AppCompatActivity {
-    //private WChannel mChannelItem;
-    private static final String EXTRA_CHANNEL_ITEM = "ChannelItem";
+//private WChannel mChannelItem;
+private static final String EXTRA_CHANNEL_ITEM = "ChannelItem";
 
-    public static Intent newIntent(Context context, WChannel item){
+public static Intent newIntent(Context context, WChannel item){
         Intent intent = new Intent(context,Channel_item_activity.class);
         intent.putExtra(EXTRA_CHANNEL_ITEM,item);
         return intent;
 
-    }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        }
+@Override
+protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean isLightTheme = preferences.getBoolean("isLightTheme",false);
         if(isLightTheme){
-            setTheme(R.style.AppThemeLight);
+        setTheme(R.style.AppThemeLight);
         }else {
-            setTheme(R.style.AppTheme);
+        setTheme(R.style.AppTheme);
         }
         setContentView(R.layout.item_activity);
         WChannel channelItem = (WChannel) getIntent().getSerializableExtra(EXTRA_CHANNEL_ITEM);
@@ -46,8 +46,8 @@ public class Channel_item_activity extends AppCompatActivity {
         fragmentTransaction.commit();
 
 
-    }
+        }
 
-}
+        }
 
 
